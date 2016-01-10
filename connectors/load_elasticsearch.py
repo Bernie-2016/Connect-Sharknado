@@ -83,10 +83,11 @@ def get_es_values(rec):
 
 if __name__ == '__main__':
     db = connect_postgresql()
-    print 'hi'
     conf = config()["elasticsearch"]
     es = Elasticsearch(conf["host"])
+    print 'This needs to be finished -- reading from postgreSQL and inserting into ES'
 
+# this will never happen, it is for reference of what the mongo version used to do
 if __name__ == '__mongoland__':
     oplog = db.local.oplog.rs
     first = next(oplog.find().sort('$natural', pymongo.DESCENDING).limit(-1))
