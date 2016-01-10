@@ -7,4 +7,4 @@ Dev environment:
 * pip install requests pyYAML BeautifulSoup Elasticsearch
 
 
-edit /opt/bernie/config.yml
+edit /opt/bernie/config.yml (sample http://pastebin.com/5rqFfCMJ)
