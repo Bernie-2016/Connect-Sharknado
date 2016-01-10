@@ -37,7 +37,6 @@ def prepare(entry):
     dbname, colname = entry["ns"].split(".")
 
     # If an insert, set rec to inserted rec
-
     if entry["op"] == 'i':
         rec = entry["o"]
 
