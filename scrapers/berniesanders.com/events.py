@@ -19,29 +19,35 @@ if __name__ == "__main__":
     else:
         from ..scraper import Scraper
 
-allowed_keys = [
-    "original_id",
-    "id_obfuscated",
+
+logging.basicConfig(format="%(asctime)s - %(levelname)s : %(message)s",
+                    level=logging.INFO)
+
+required_keys = [
+    "event_id",
+    "event_id_obfuscated", 
     "url",
     "name",
+    "date",
     "start_time",
     "timezone",
     "description",
-    "venue",
-    "lat",
-    "lon",
+    "latitude",
+    "longitude",
     "is_official",
     "attendee_count",
     "capacity",
     "site",
     "lang",
     "event_type_name",
-    "event_date"
+    "venue_address1",
+    "venue_address2",
+    "venue_address3",
+    "venue_name",
+    "venue_city",
+    "venue_state",
+    "venue_zip"
 ]
-
-logging.basicConfig(format="%(asctime)s - %(levelname)s : %(message)s",
-                    level=logging.INFO)
-
 
 class EventScraper(Scraper):
     def __init__(self):
@@ -89,29 +95,25 @@ class EventScraper(Scraper):
         return query_string
 
     def translate(self, result):
+
         # Translate normal key names based on map
         result = dict((self.map.get(k, k), v) for (k, v) in result.items())
+    
+        result["event_id"] = result["original_id"]
+        result["venue_state"] = result["venue_state_cd"]
 
         # Compile Venue
         address_map = {
-            "venue_addr1": "address1",
-            "venue_addr2": "address2",
-            "venue_addr3": "address3"
+            "address1" : "addr1",
+            "address2" : "addr2",
+            "address3" : "addr3"
         }
-        result["venue"] = {
-            "name": result["venue_name"],
-            "city": result["venue_city"],
-            "state": result["venue_state_cd"],
-            "zip": result["venue_zip"],
-            "location": {
-                "lon": float(result["longitude"]),
-                "lat": float(result["latitude"])
-            }
-        }
+
         # map any available address fields
-        for k, v in address_map.iteritems():
+        for k,v in address_map.iteritems():
+            result["venue_"+k] = ''
             try:
-                result["venue"][v] = result[k]
+                result["venue_"+k] = result["venue_"+v]
             except KeyError:
                 pass
 
@@ -128,11 +130,10 @@ class EventScraper(Scraper):
         result["event_date"] = str(result["start_time"].date())
         result["is_official"] = result["is_official"] == "1"
 
-        # remove any unneeded keys
-        keys = result.keys()
-        for k in keys:
-            if k not in allowed_keys:
-                result.pop(k)
+        for key in required_keys:
+            if key not in result:
+                result[key] = ''
+
         return result
 
     def go(self):
@@ -141,20 +142,23 @@ class EventScraper(Scraper):
             result_format="json"
         )
         for result in r:
-            rec = self.translate(result)
-            query = {
-                "original_id": rec["original_id"],
-                "site": "berniesanders.com"
-            }
-            if self.db.events.find(query).count() > 0:
-                msg = "Updating record for '{0}'."
-                logging.info(msg.format(rec["name"]))
-                self.db.events.update_one(query, {"$set": rec})
+            record = self.translate(result)
+            if self.event_exists(record["event_id"]):
+                print "found"
             else:
-                msg = "Inserting record for {0}."
-                logging.info(msg.format(rec["name"]))
-                rec["inserted_at"] = datetime.now()
-                self.db.events.insert_one(rec)
+                print "not found"
+                msg = "Inserting record for '{0}'."
+                logging.info(msg.format(record["name"]))
+                record["timestamp_creation"] = datetime.now()
+                self.cur.execute("INSERT INTO event (id, event_id, event_id_obfuscated, url, name, date, start_time, timezone, description, latitude, longitude, is_official, attendee_count, capacity, site, lang, event_type_name, venue_address1, venue_address2, venue_address3, venue_name, venue_city, venue_zip, timestamp_creation) VALUES(default, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)", (record["event_id"], record["event_id_obfuscated"], record["url"], record["name"], record["date"], record["start_time"], record["timezone"], record["description"], record["latitude"], record["longitude"], record["is_official"], record["attendee_count"], record["capacity"], record["site"], record["lang"], record["event_type_name"], record["venue_address1"], record["venue_address2"], record["venue_address3"], record["venue_name"], record["venue_city"], record["venue_zip"], record["timestamp_creation"],))
+                self.db.commit()
+            
+
+    def event_exists(self, event_id):
+        self.cur.execute("SELECT * FROM event WHERE event_id = (%s)", (event_id,))
+        return self.cur.fetchone() is not None
+            
+
 if __name__ == "__main__":
     bernie = EventScraper()
     bernie.go()
