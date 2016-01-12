@@ -2,6 +2,7 @@ import logging
 import requests
 import json
 import os
+from models.video import VideoProvider
 
 from datetime import datetime
 
@@ -19,7 +20,6 @@ if __name__ == "__main__":
 
 
 class Bernie2016VideosScraper(Scraper):
-
     def __init__(self):
         Scraper.__init__(self)
         api_key = self.config["youtube"]["api_key"]
@@ -33,6 +33,7 @@ class Bernie2016VideosScraper(Scraper):
           "part": "snippet"
         }
         self.details = Bernie2016VideoDetailScraper()
+        self.video_provider = VideoProvider()
 
     def translate(self, json):
       idJson = json["id"]
@@ -56,20 +57,14 @@ class Bernie2016VideosScraper(Scraper):
           record = self.translate(item)
           record["description"] = self.fetch_full_description(idJson["videoId"])
 
-          if self.video_exists(idJson["videoId"]):
+          if self.video_provider.exists_by_video_id(idJson["videoId"]):
             print "found"
           else:
             print "not found"
             msg = "Inserting record for '{0}'."
             logging.info(msg.format(record["title"]))
             record["timestamp_creation"] = datetime.now()
-            self.cur.execute("INSERT INTO video (id, video_id, site, title, description, thumbnail_url, timestamp_creation, timestamp_publish, description_snippet) VALUES(default, %s, %s, %s, %s, %s, %s, %s, %s)", (record["video_id"], record["site"], record["title"], record["description"], record["thumbnail_url"], record["timestamp_creation"], record["timestamp_publish"], record["snippet"],))
-            self.db.commit()
-
-
-    def video_exists(self, video_id):
-        self.cur.execute("SELECT * FROM video WHERE video_id = (%s)", (video_id,))
-        return self.cur.fetchone() is not None
+            self.video_provider.create(record)
 
     def fetch_full_description(self, video_id):
         self.details.params = {
