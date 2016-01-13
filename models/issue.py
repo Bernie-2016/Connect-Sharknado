@@ -21,6 +21,20 @@ class IssueProvider (model.Provider):
             cur.execute("INSERT INTO issue (uuid, url, site, lang, title, body, body_html, description, description_html, timestamp_creation, timestamp_publish) VALUES(%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)", (record["uuid"], record["url"], record["site"], record["lang"], record["title"], record["body"], record["body_html"], record["description"], record["description_html"], record["timestamp_creation"], record["timestamp_publish"],))
             return Issue(record)
 
+    def update (self, record, request):
+        msg = "Updating issue record for '{0}'."
+        logging.info(msg.format(record.title.encode("utf8")))
+
+        with self.get_db_cursor() as cur:
+            record.title = request.form["title"]
+            record.url = request.form["url"]
+            record.site = request.form["site"]
+            record.lang = request.form["lang"]
+            record.description = request.form["description"]
+
+            cur.execute("UPDATE issue SET (url, site, lang, title, body, body_html, description, description_html, timestamp_publish) = (%s, %s, %s, %s, %s, %s, %s, %s, %s) WHERE uuid=%s", (record.url, record.site, record.lang, record.title, record.body, record.body_html, record.description, record.description_html, record.timestamp_publish, record.uuid,))
+            return True
+
     def exists (self, uuid):
         """ Returns True if record with uuid exists """
         return self.read (uuid) is not None

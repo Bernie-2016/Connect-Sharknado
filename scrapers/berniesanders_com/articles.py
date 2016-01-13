@@ -43,7 +43,6 @@ class ArticlesScraper(Scraper):
         for article in content.findAll("article"):
             
             rec = {
-                "article_id": 0,
                 "image_url": "",
                 "timestamp_publish": parser.parse(article.time["datetime"]),
                 "site": "berniesanders.com",

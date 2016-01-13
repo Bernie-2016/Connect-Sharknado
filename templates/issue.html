@@ -1,3 +1,31 @@
-<div class="breadcrumb"><a href="/">Home</a> &rsaquo; <a href="/issues/list">List of issues</a> &rsaquo; {{ issue.title }}</div>
+{% include '_header.html' %}
 
-<h1>Issue: {{ issue.title }}</h1>
+	<div class="breadcrumb"><a href="/">Home</a> &rsaquo; <a href="/issue/list">List of issues</a> &rsaquo; {{ issue.title }}</div>
+
+{% if updated: %}
+	<div class="status">Record updated. {{ msg }}</div>
+{% endif %}
+
+	<form class="update" action="/issue/{{ issue.uuid }}" method="POST">
+		<h1>Issue: {{ issue.title }}</h1>
+		<div>
+			<div class="fieldname">Title:</div> <input type="text" class="text-m" name="title" value="{{ issue.title }}" />
+		</div>
+		<div>
+			<div class="fieldname">URL:</div> <input type="text" class="text-m" name="url" value="{{ issue.url }}" />
+		</div>
+		<div>
+			<div class="fieldname">Site:</div> <input type="text" class="text-m" name="site" value="{{ issue.site }}" />
+		</div>
+		<div>
+			<div class="fieldname">Language:</div> <input type="text" class="text-m" name="lang" value="{{ issue.lang }}" />
+		</div>
+		<div>
+			<div class="fieldname">Description:</div> <textarea name="description" class="textarea-m">{{ issue.description }}</textarea>
+		</div>
+		<div>
+			<input type="submit" />
+		</div>
+	</form>
+
+{% include '_footer.html' %}

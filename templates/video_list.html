@@ -1,0 +1,12 @@
+{% include '_header.html' %}
+
+	<div class="breadcrumb"><a href="/">Home</a> &rsaquo; List of videos</div>
+
+	<h1>List of videos</h1>
+	<ul>
+{% for video in videos: %}
+		<li><a href="/video/{{ video.uuid }}">{{ video.title }}</a></li>
+{% endfor %}
+	</ul>
+
+{% include '_footer.html' %}

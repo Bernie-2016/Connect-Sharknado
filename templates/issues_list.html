@@ -1,8 +1,0 @@
-<div class="breadcrumb"><a href="/">Home</a> &rsaquo; List of issues</div>
-
-<h1>List of issues</h1>
-<ul>
-{% for issue in issues: %}
-<li><a href="/issue/{{ issue.uuid }}">{{ issue.title }}</a></li>
-{% endfor %}
-</ul>
