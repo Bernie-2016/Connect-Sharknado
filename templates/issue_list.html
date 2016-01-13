@@ -3,10 +3,21 @@
 	<div class="breadcrumb"><a href="/">Home</a> &rsaquo; List of issues</div>
 
 	<h1>List of issues</h1>
-	<ul>
+	<table class="table table-striped">
+		<thead>
+			<tr>
+				<th>Issue Title</th>
+				<th>Publish Date</th>
+			</tr>
+		</thead>
+		<tbody>
 {% for issue in issues: %}
-		<li><a href="/issue/{{ issue.uuid }}">{{ issue.title }}</a></li>
+			<tr>
+				<td><a href="/issue/{{ issue.uuid }}">{{ issue.title }}</a></td>
+				<td>{{ issue.timestamp_publish }}</td>
+			</tr>
 {% endfor %}
-	</ul>
+		</tbody>
+	</table>
 
 {% include '_footer.html' %}
