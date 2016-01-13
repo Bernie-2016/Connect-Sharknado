@@ -23,7 +23,7 @@ class EventProvider (model.Provider):
 
     def get_all(self):
         with self.get_db_cursor() as cur:
-            cur.execute("SELECT * FROM event ORDER BY timestamp_creation DESC")
+            cur.execute("SELECT * FROM " + self.table_name + " ORDER BY timestamp_creation DESC")
             res = cur.fetchall()
             returns = []
             for record in res:
