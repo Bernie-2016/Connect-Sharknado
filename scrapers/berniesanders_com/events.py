@@ -10,15 +10,8 @@ from dateutil import parser
 
 from HTMLParser import HTMLParser
 
-if __name__ == "__main__":
-    if __package__ is None:
-        import sys
-        from os import path
-        sys.path.append(path.dirname(path.dirname(path.abspath(__file__))))
-        from scraper import Scraper
-    else:
-        from ..scraper import Scraper
-
+from models.event import EventProvider
+from scrapers.scraper import Scraper
 
 logging.basicConfig(format="%(asctime)s - %(levelname)s : %(message)s",
                     level=logging.INFO)
@@ -71,6 +64,7 @@ class EventScraper(Scraper):
             "event_id": "original_id",
             "start_dt": "start_time"
         }
+        self.event_provider = EventProvider()
 
     def sign_params(self, api_secret):
 
@@ -98,7 +92,7 @@ class EventScraper(Scraper):
 
         # Translate normal key names based on map
         result = dict((self.map.get(k, k), v) for (k, v) in result.items())
-    
+
         result["event_id"] = result["original_id"]
         result["venue_state"] = result["venue_state_cd"]
 
@@ -143,15 +137,15 @@ class EventScraper(Scraper):
         )
         for result in r:
             record = self.translate(result)
-            if self.event_exists(record["event_id"]):
+
+            if self.event_provider.exists_by_event_id(record["event_id"]):
                 print "found"
             else:
                 print "not found"
                 msg = "Inserting record for '{0}'."
-                logging.info(msg.format(record["name"]))
+                logging.info(msg.format(record["name"].encode("utf8")))
                 record["timestamp_creation"] = datetime.now()
-                self.cur.execute("INSERT INTO event (id, event_id, event_id_obfuscated, url, name, date, start_time, timezone, description, latitude, longitude, is_official, attendee_count, capacity, site, lang, event_type_name, venue_address1, venue_address2, venue_address3, venue_name, venue_city, venue_zip, timestamp_creation) VALUES(default, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)", (record["event_id"], record["event_id_obfuscated"], record["url"], record["name"], record["date"], record["start_time"], record["timezone"], record["description"], record["latitude"], record["longitude"], record["is_official"], record["attendee_count"], record["capacity"], record["site"], record["lang"], record["event_type_name"], record["venue_address1"], record["venue_address2"], record["venue_address3"], record["venue_name"], record["venue_city"], record["venue_zip"], record["timestamp_creation"],))
-                self.db.commit()
+                self.event_provider.create(record)
             
 
     def event_exists(self, event_id):
