@@ -4,8 +4,11 @@ import psycopg2
 import psycopg2.extras
 import yaml
 import abc
+import uuid
 from datetime import datetime
 
+
+psycopg2.extras.register_uuid()
 
 class Provider:
     __metaclass__ = abc.ABCMeta
@@ -24,6 +27,9 @@ class Provider:
         db = psycopg2.connect("host=" + c["host"] + " dbname=" + c["dbname"] + " user=" + c["dbuser"] + " password=" + c["dbpass"])
         db.autocommit = True
         return db
+
+    def generate_uuid(self):
+        return uuid.uuid4()
 
     def get_config(self):
         try:
