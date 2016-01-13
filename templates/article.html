@@ -1,0 +1,53 @@
+{% include '_header.html' %}
+
+	<div class="breadcrumb"><a href="/">Home</a> &rsaquo; <a href="/article/list">List of articles</a> &rsaquo; {{ article.title }}</div>
+
+{% if updated: %}
+	<div class="status">Record updated. {{ msg }}</div>
+{% endif %}
+
+	<form class="update" action="/article/{{ article.uuid }}" method="POST">
+		<h1>Article: {{ article.title }}</h1>
+		<img src="{{ article.image_url }}" class="articleimage">
+		<div>
+			<div class="fieldname">Title:</div> <input type="text" class="text-m" name="title" value="{{ article.title }}" />
+		</div>
+		<div>
+			<div class="fieldname">Article Type:</div> <input type="text" class="text-m" name="article_type" value="{{ article.article_type }}" />
+		</div>
+		<div>
+			<div class="fieldname">Article Category:</div> <input type="text" class="text-m" name="article_category" value="{{ article.article_category }}" />
+		</div>
+		<div>
+			<div class="fieldname">Article ID:</div> <input type="text" class="text-m" name="article_id" value="{{ article.article_id }}" />
+		</div>
+		<div>
+			<div class="fieldname">Site:</div> <input type="text" class="text-m" name="site" value="{{ article.site }}" />
+		</div>
+		<div>
+			<div class="fieldname">URL:</div> <input type="text" class="text-m" name="url" value="{{ article.url }}" />
+		</div>
+		<div>
+			<div class="fieldname">Image URL:</div> <input type="text" class="text-m" name="image_url" value="{{ article.image_url }}" />
+		</div>
+		<div>
+			<div class="fieldname">Excerpt:</div> <textarea class="textarea-s" name="excerpt"> {{ article.excerpt }}</textarea>
+		</div>
+		<div>
+			<div class="fieldname">Excerpt HTML:</div> <textarea class="textarea-s" name="excerpt_html"> {{ article.excerpt_html }}</textarea>
+		</div>
+		<div>
+			<div class="fieldname">Body:</div> <textarea class="textarea-m" name="body"> {{ article.body }}</textarea>
+		</div>
+		<div>
+			<div class="fieldname">Body HTML:</div> <textarea class="textarea-m" name="body_html"> {{ article.body_html }}</textarea>
+		</div>
+		<div>
+			<div class="fieldname">Body HTML (No Style):</div> <textarea class="textarea-m" name="body_html_nostyle"> {{ article.body_html_nostyle }}</textarea>
+		</div>
+		<div>
+			<input type="submit" />
+		</div>
+	</form>
+
+{% include '_footer.html' %}
