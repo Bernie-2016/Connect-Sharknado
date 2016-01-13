@@ -32,6 +32,16 @@ class IssueProvider (model.Provider):
     def make_model (self, props):
         return Issue (props)
 
+    def get_all(self):
+        with self.get_db_cursor() as cur:
+            cur.execute("SELECT * FROM issue ORDER BY timestamp_creation DESC")
+            res = cur.fetchall()
+            returns = []
+            for record in res:
+                if record is not None:
+                    returns.append(Issue(record))
+            return returns
+
     def read (self, uuid):
         with self.get_db_cursor() as cur:
             cur.execute("SELECT * FROM issue WHERE uuid = (%s)", (uuid,))
