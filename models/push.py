@@ -101,6 +101,31 @@ class PushProvider (model.Provider):
             else:
                 return None
 
+    def create_by_foreign_model (self, model):
+        ''' Create a push record from a foreign model object '''
+        try:
+            push = {
+                "object_type": model.object_type,
+                "object_uuid": model.uuid,
+                "body": '',
+                "url": model.url
+            }
+        except AttributeError as e:
+            msg = "Push could not be created because missing attribute: {0}."
+            logging.info(msg.format(e.encode("utf8")))
+            return False           
+
+        if hasattr(model, 'body'):
+            push["body"] = model.body
+
+        if hasattr(model, 'title'):
+            push["title"] = model.title
+        elif hasattr(model, 'name'):
+            push["title"] = model.name
+        else:
+            push["title"] = ''
+
+        return self.create(push)
 
 class Push (model.Model):
     object_type = 'push'

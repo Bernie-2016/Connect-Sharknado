@@ -15,6 +15,7 @@ from HTMLParser import HTMLParser
 
 from models.event import EventProvider
 from scrapers.scraper import Scraper
+from models.push import PushProvider
 
 logging.basicConfig(format="%(asctime)s - %(levelname)s : %(message)s",
                     level=logging.INFO)
@@ -68,6 +69,7 @@ class EventScraper(Scraper):
             "start_dt": "start_time"
         }
         self.event_provider = EventProvider()
+        self.push_provider = PushProvider()
 
     def sign_params(self, api_secret):
 
@@ -170,7 +172,8 @@ class EventScraper(Scraper):
                 msg = "Inserting record for '{0}'."
                 logging.info(msg.format(record["name"].encode("utf8")))
                 record["timestamp_creation"] = datetime.now()
-                self.event_provider.create(record)
+                result = self.event_provider.create(record)
+                self.push_provider.create_by_foreign_model(result)
             
 
     def event_exists(self, event_id):
