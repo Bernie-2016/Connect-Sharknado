@@ -175,7 +175,7 @@ class ElasticSearchWrapper:
         if query_string is None:
            query_string = '*:*'
 
-        params = {'index': index, 'doc_type': doc_type, '_source': False, 'q': query_string, 'size': 999999999}
+        params = {'index': index, 'doc_type': doc_type, '_source': False, 'q': query_string, 'size': 10000}
         result = conn.search (**params)
 
         for hit in result['hits']['hits']:
