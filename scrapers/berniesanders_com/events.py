@@ -173,7 +173,8 @@ class EventScraper(Scraper):
                 logging.info(msg.format(record["name"].encode("utf8")))
                 record["timestamp_creation"] = datetime.now()
                 result = self.event_provider.create(record)
-                self.push_provider.create_by_foreign_model(result)
+                # creating pushes for events disabled for now
+                # self.push_provider.create_by_foreign_model(result)
             
 
     def event_exists(self, event_id):
