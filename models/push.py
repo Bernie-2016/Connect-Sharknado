@@ -21,9 +21,13 @@ class PushProvider (model.Provider):
         logging.info(msg.format(record["title"].encode("utf8")))
         record["uuid"] = self.generate_uuid()
         record["timestamp_creation"] = datetime.now()
+        record["timestamp_publish"] = datetime.now()
+
+        if self.validate_uuid4(record["object_uuid"]) is False:
+            record["object_uuid"] = self.generate_uuid()
 
         with self.get_db_cursor() as cur:
-            cur.execute("INSERT INTO push (uuid, status, object_type, object_uuid, title, body, url, timestamp_creation) VALUES(%s, %s, %s, %s, %s, %s, %s, %s)", (record["uuid"], 1, record["object_type"], record["object_uuid"], record["title"], record["body"], record["url"], record["timestamp_creation"],))
+            cur.execute("INSERT INTO push (uuid, status, object_type, object_uuid, title, body, url, timestamp_creation, timestamp_publish) VALUES(%s, %s, %s, %s, %s, %s, %s, %s, %s)", (record["uuid"], 1, record["object_type"], record["object_uuid"], record["title"], record["body"], record["url"], record["timestamp_creation"], record["timestamp_publish"],))
             return Push(record)
 
     def update (self, record, request):
@@ -35,9 +39,20 @@ class PushProvider (model.Provider):
                 setattr(record, k, request.form[k])
 
             record.status = int(request.form["status"])
-
             cur.execute("UPDATE push SET (status, object_type, object_uuid, title, body, url, timestamp_publish) = (%s, %s, %s, %s, %s, %s, %s) WHERE uuid=%s", (record.status, record.object_type, record.object_uuid, record.title, record.body, record.url, record.timestamp_publish, record.uuid,))
+
             return True
+
+    def set_pushed (self, record):
+        msg = "Setting pushed status for push record '{0}'."
+        logging.info(msg.format(record.title.encode("utf8")))
+        with self.get_db_cursor() as cur:
+            record.timestamp_publish = datetime.now()
+            record.status = 2
+            cur.execute("UPDATE push SET (status, object_type, object_uuid, title, body, url, timestamp_publish) = (%s, %s, %s, %s, %s, %s, %s) WHERE uuid=%s", (record.status, record.object_type, record.object_uuid, record.title, record.body, record.url, record.timestamp_publish, record.uuid,))
+
+            return True
+
 
     def exists (self, uuid):
         """ Returns True if record with uuid exists """
@@ -113,7 +128,7 @@ class PushProvider (model.Provider):
         except AttributeError as e:
             msg = "Push could not be created because missing attribute: {0}."
             logging.info(msg.format(e.encode("utf8")))
-            return False           
+            return False
 
         if hasattr(model, 'body'):
             push["body"] = model.body
