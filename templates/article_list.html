@@ -13,7 +13,7 @@
 		</thead>
 		<tbody>
 {% for article in articles: %}
-			<tr>
+			<tr{% if article.status == 0 %} class="redacted"{% endif %}>
 				<td><a href="/article/{{ article.uuid }}">{{ article.title }}</a></td>
 				<td>{{ article.article_type }}</td>
 				<td>{{ article.timestamp_publish }}</td>
