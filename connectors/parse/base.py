@@ -13,7 +13,7 @@ class ParseWrapper:
             self.configfile = '/opt/bernie/config.yml'
         else:
             self.configfile = configfile
-            
+
         self.config = self.get_config()
         c = self.config['parse']
 
@@ -30,9 +30,9 @@ class ParseWrapper:
         payload = \
         {
             "where": {},
-            "data" : { 
-                "action": action, 
-                "alert": alert, 
+            "data" : {
+                "action": action,
+                "alert": alert,
                 "sound": "default",
                 "identifier": identifier
             }
@@ -40,9 +40,15 @@ class ParseWrapper:
 
         msg = "Sending {0}"
         logging.info(msg.format(alert))
-        r = requests.post(self.base_uri + '/push', json=payload, headers=self.headers)
-        logging.info(r.text)
 
+        try:
+            r = requests.post(self.base_uri + '/push', json=payload, headers=self.headers, timeout=30.0)
+        except requests.exceptions.RequestException as e:
+            logging.info(e)
+            return False
+
+        logging.info(r.text)
+        return True
 
     def get_config(self):
         try:
