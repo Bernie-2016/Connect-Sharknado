@@ -26,9 +26,10 @@ class ArticleProvider (connectors.elasticsearch.base.Provider):
         index = "_".join (["articles", obj.lang, version])
         doc_type = obj.site.replace ('.', '_')
         body = obj.__dict__.copy()
-        body['uuid'] = str (body['uuid'])
+        body['_id'] = str (body['uuid'])
+        del body['uuid']
         body['object_type'] = obj.object_type
-        return connectors.elasticsearch.base.SearchData (body['uuid'], index, doc_type, body)
+        return connectors.elasticsearch.base.SearchData (body['_id'], index, doc_type, body)
 
     def get_search_filters (self):
         return [('object_type', 'article')]

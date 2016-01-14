@@ -25,7 +25,7 @@ class SearchData:
         props['doc_type'] = self.doc_type
 
         if self.body is not None:
-            props['body'] = { 'body': self.body }
+            props['body'] = self.body
 
         if self.parent is not None:
             props['parent'] = self.parent
@@ -164,7 +164,7 @@ class ElasticSearchWrapper:
             else:
                 parent = None
 
-            return SearchData (res['_id'], res['_index'], res['_type'], res['_source']['body'], parent)
+            return SearchData (res['_id'], res['_index'], res['_type'], res['_source'], parent)
         else:
             return None
 
