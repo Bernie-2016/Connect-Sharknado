@@ -32,6 +32,16 @@ class ArticleProvider (model.Provider):
     def make_model (self, props):
         return Article (props)
 
+    def get_all(self):
+        with self.get_db_cursor() as cur:
+            cur.execute("SELECT * FROM article ORDER BY timestamp_publish DESC")
+            res = cur.fetchall()
+            returns = []
+            for record in res:
+                if record is not None:
+                    returns.append(Article(record))
+            return returns
+
     def read (self, uuid):
         with self.get_db_cursor() as cur:
             cur.execute("SELECT * FROM article WHERE uuid = (%s)", (uuid,))
