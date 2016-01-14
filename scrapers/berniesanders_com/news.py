@@ -6,25 +6,19 @@ from datetime import datetime
 from dateutil import parser
 from HTMLParser import HTMLParser
 
+from models.news import NewsProvider
+from scrapers.scraper import Scraper
+
 logging.basicConfig(format="%(asctime)s - %(levelname)s : %(message)s",
                     level=logging.INFO)
 
-if __name__ == "__main__":
-    if __package__ is None:
-        import sys
-        from os import path
-        sys.path.append(path.dirname(path.dirname(path.abspath(__file__))))
-        from scraper import Scraper
-    else:
-        from ..scraper import Scraper
-
-
-class ArticlesScraper(Scraper):
+class NewsScraper(Scraper):
 
     def __init__(self):
         Scraper.__init__(self)
         self.url = "https://berniesanders.com/news/"
         self.html = HTMLParser()
+        self.news_provider = NewsProvider()
 
     def retrieve_article(self, url):
         for x in range(3):
@@ -48,13 +42,17 @@ class ArticlesScraper(Scraper):
         content = soup.find("section", {"id": "content"})
         for article in content.findAll("article"):
             rec = {
-                "created_at": parser.parse(article.time["datetime"]),
+                "news_id": article['id'],
+                "image_url": "",
+                "timestamp_publish": parser.parse(article.time["datetime"]),
                 "site": "berniesanders.com",
                 "lang": "en",
                 "title": self.html.unescape(article.h2.text),
-                "article_category": self.html.unescape(article.h1.string.strip()),
+                "news_category": self.html.unescape(article.h1.string.strip()),
                 "url": article.h2.a["href"]
             }
+            if article.img is not None:
+                rec["image_url"] = article.img["src"]
 
             # Pull excerpt if available
             try:
@@ -63,49 +61,43 @@ class ArticlesScraper(Scraper):
             except AttributeError:
                 rec["excerpt"], rec["excerpt_html"] = "", ""
 
-            # set image_url if available
-            if article.img is not None:
-                rec["image_url"] = article.img["src"]
-
             # Determine Type
-            if rec['article_category'].lower() in ["on the road", "news"]:
-                rec['article_type'] = "News"
-            elif rec['article_category'].lower() == "press release":
-                rec['article_type'] = "PressRelease"
+            if rec['news_category'].lower() in ["on the road", "news"]:
+                rec['news_type'] = "News"
+            elif rec['news_category'].lower() == "press release":
+                rec['news_type'] = "PressRelease"
             else:
-                rec['article_type'] = "Unknown"
+                rec['news_type'] = "Unknown"
 
-            query = {
-                "title": rec["title"],
-                "article_type": rec["article_type"]
-            }
             text, html, image = self.retrieve_article(rec["url"])
             if text and not html:
                 rec["body"], rec["body_html"] = text, text
-                rec['article_type'] = "ExternalLink"
+                rec['news_type'] = "ExternalLink"
+                rec["body_html_nostyle"] = ""
             elif text and html:
                 rec["body"], rec["body_html"] = text, html
 
                 no_style = self.remove_style(BeautifulSoup(html))
                 rec["body_html_nostyle"] = "".join([str(p) for p in no_style.findAll("p")])
 
-                if 'image_url' not in rec:
-                    rec["image_url"] = image
+                try:
+                    article["image_url"]
+                except KeyError:
+                    article["image_url"] = image
 
             msg = ""
-            if not self.db.articles.find(query).limit(1).count():
-                rec["inserted_at"] = datetime.now(),
-                msg = "Inserting '{0}', created {1}"
-                self.db.articles.insert_one(rec)
+            if self.news_provider.exists_by_title_news_type(rec["title"], rec["news_type"]):
+                print "found"
             else:
-                msg = "Updating '{0}', created {1}"
-                self.db.articles.update_one(query, {"$set": rec})
+                print "not found"
+                msg = "Inserting '{0}', created {1}"
+                self.news_provider.create(rec)
 
             logging.info(msg.format(
                 rec["title"].encode("utf8"),
-                str(rec["created_at"])
+                str(rec["timestamp_publish"])
             ))
 
 if __name__ == "__main__":
-    bernie = ArticlesScraper()
+    bernie = NewsScraper()
     bernie.go()
