@@ -52,10 +52,8 @@ class Sync:
         for obj in provider.get_current_objects():
             search_data = provider.get_search_data (obj, VERSION)
 
-            if conn.get (search_data) is None:
-                msg = "Indexing {0}"
-                logging.info (msg.format (search_data.id_))
-                conn.index (search_data)
-            else:
-                msg = "Found {0} in index"
-                logging.info (msg.format (search_data.id_))
+            # Eventually we can actually handle updates efficiently but for
+            # now lets just do it the easy way
+            msg = "Indexing {0}"
+            logging.info (msg.format (search_data.id_))
+            conn.index (search_data)
