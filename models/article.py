@@ -46,6 +46,16 @@ class ArticleProvider (model.Provider):
                     returns.append(Article(record))
             return returns
 
+    def get_all_languages (self):
+        with self.get_db_cursor() as cur:
+            cur.execute ("SELECT DISTINCT lang FROM article", ())
+            return map (lambda x: x['lang'], cur)
+
+    def get_all_sites (self):
+        with self.get_db_cursor() as cur:
+            cur.execute ("SELECT DISTINCT site FROM article", ())
+            return map (lambda x: x['site'], cur)
+
     def read (self, uuid):
         with self.get_db_cursor() as cur:
             cur.execute("SELECT * FROM article WHERE uuid = (%s)", (uuid,))

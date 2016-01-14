@@ -43,6 +43,16 @@ class IssueProvider (model.Provider):
         """ Returns True if record with issue_id exists """
         return self.read_by_url (url) is not None
 
+    def get_all_languages (self):
+        with self.get_db_cursor() as cur:
+            cur.execute ("SELECT DISTINCT lang FROM issue", ())
+            return map (lambda x: x['lang'], cur)
+
+    def get_all_sites (self):
+        with self.get_db_cursor() as cur:
+            cur.execute ("SELECT DISTINCT site FROM issue", ())
+            return map (lambda x: x['site'], cur)
+
     def make_model (self, props):
         return Issue (props)
 
