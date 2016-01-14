@@ -31,6 +31,16 @@ class EventProvider (model.Provider):
                     returns.append(Event(record))
             return returns
 
+    def get_all_languages (self):
+        with self.get_db_cursor() as cur:
+            cur.execute ("SELECT DISTINCT lang FROM event", ())
+            return map (lambda x: x['lang'], cur)
+
+    def get_all_sites (self):
+        with self.get_db_cursor() as cur:
+            cur.execute ("SELECT DISTINCT site FROM event", ())
+            return map (lambda x: x['site'], cur)
+
     def exists (self, uuid):
         """ Returns True if record with uuid exists """
         return self.read (uuid) is not None
