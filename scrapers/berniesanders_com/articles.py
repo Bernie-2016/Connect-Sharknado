@@ -78,7 +78,7 @@ class ArticlesScraper(Scraper):
                     article["image_url"] = image
 
             msg = ""
-            if self.article_provider.exists_by_title_article_type(rec["title"], rec["article_type"]):
+            if self.article_provider.exists_by_article_id(rec["article_id"]):
                 print "found"
             else:
                 print "not found"

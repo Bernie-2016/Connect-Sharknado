@@ -86,7 +86,6 @@ CREATE TABLE article (
     body text,
     body_html text,
     body_html_nostyle text,
-    CONSTRAINT title_article_type UNIQUE (title, article_type) -- No duplicates with the same title and article type
 );
 CREATE UNIQUE INDEX index_article_uuid ON article (uuid);
 CREATE UNIQUE INDEX index_article_id ON article (article_id);

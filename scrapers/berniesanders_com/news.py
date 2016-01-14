@@ -86,7 +86,7 @@ class NewsScraper(Scraper):
                     article["image_url"] = image
 
             msg = ""
-            if self.news_provider.exists_by_title_news_type(rec["title"], rec["news_type"]):
+            if self.news_provider.exists_by_news_id(rec["news_id"]):
                 print "found"
             else:
                 print "not found"
