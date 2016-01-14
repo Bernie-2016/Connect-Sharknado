@@ -6,7 +6,7 @@ class EventProvider (connectors.elasticsearch.base.Provider):
         self.event_provider = models.event.EventProvider()
 
     def get_current_objects (self):
-        return self.event_provider.get()
+        return filter (lambda x: x.status == 1, self.event_provider.get())
 
     def get_doc_types (self, version):
         return map (lambda x: x.replace('.','_'), self.event_provider.get_all_sites())
@@ -15,7 +15,12 @@ class EventProvider (connectors.elasticsearch.base.Provider):
         return map (lambda x: "_".join (["events", x, version]), self.event_provider.get_all_languages())
 
     def get_object (self, id_, doc_type, index):
-        return self.event_provider.read (id_)
+        obj = self.event_provider.read (id_)
+
+        if obj is not None and obj.status == 1:
+            return obj
+        else:
+            return None
 
     def get_search_data (self, obj, version):
         index = "_".join (["events", obj.lang, version])

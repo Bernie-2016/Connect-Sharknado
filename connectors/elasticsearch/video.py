@@ -6,7 +6,7 @@ class VideoProvider (connectors.elasticsearch.base.Provider):
         self.video_provider = models.video.VideoProvider()
 
     def get_current_objects (self):
-        return self.video_provider.get()
+        return filter (lambda x: x.status == 1, self.video_provider.get())
 
     def get_doc_types (self, version):
         return map (lambda x: x.replace('.','_'), self.video_provider.get_all_sites())
@@ -15,7 +15,12 @@ class VideoProvider (connectors.elasticsearch.base.Provider):
         return ["_".join (["videos", version])]
 
     def get_object (self, id_, doc_type, index):
-        return self.video_provider.read (id_)
+        obj = self.video_provider.read (id_)
+
+        if obj is not None and obj.status == 1:
+            return obj
+        else:
+            return None
 
     def get_search_data (self, obj, version):
         index = "_".join (["videos", version])
