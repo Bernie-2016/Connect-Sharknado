@@ -2,7 +2,10 @@
 	<div class="breadcrumb"><a href="/">Home</a> &rsaquo; <a href="/push/list">Push queue</a> &rsaquo; {{ push.title }}</div>
 
 {% if updated: %}
-	<div class="status">Record updated. {{ msg }}</div>
+	<div class="alert alert-warning alert-dismissible">
+	  <button type="button" class="close" data-dismiss="alert"><span aria-hidden="true">&times;</span></button>
+	  {{ msg }}
+	</div>
 {% endif %}
 
 {% if push.uuid == null %}
@@ -12,7 +15,6 @@
 	<form class="update" action="/push/{{ push.uuid }}" method="POST">
 		<h1>Push Notification: {{ push.title }}</h1>
 {% endif %}
-
 		<div>
 			<div class="fieldname">Alert Text:</div> <input type="text" class="text-m" name="title" value="{{ push.title }}" />
 		</div>
@@ -25,22 +27,29 @@
 		<div>
 			<a href="/{{ push.object_type }}/{{ push.object_uuid }}">Original item</a>
 		</div>
-		<div>
-			<div class="fieldname">Date pushed:</div> <input type="text" class="text-m" name="timestamp_publish" value="{{ push.timestamp_publish }}" />
-		</div>
+		<input type="hidden" name="timestamp_creation" value="{{ push.timestamp_creation }}">
+		<input type="hidden" name="timestamp_publish" value="{{ push.timestamp_publish }}">
 		<div>
 			<div class="fieldname">URL:</div> <input type="text" class="text-m" name="url" value="{{ push.url }}" />
 		</div>
 		<div>
 			<div class="fieldname">Body:</div> <textarea class="textarea-m" name="body">{{ push.body }}</textarea>
 		</div>
+{% if push.status == 2 %}
+		<div class="alert alert-success" style="padding: 15px; width: 600px;">This push was sent at: {{ push.timestamp_publish }}</div>
+{% endif %}
 		<div>
 			<select name="status">
 				<option value="2" {% if push.status == 2 %}selected {% endif %} />Sent</option>
 				<option value="1" {% if push.status == 1 %}selected {% endif %} />Unsent</option>
 				<option value="0" {% if push.status == 0 or push.status == null %}selected {% endif %} />Redacted</option>
 			</select>
-			<input type="submit" />
+			<br><br>
+			<input type="hidden" name="_send_push" value="0">
+			<input class="btn btn-default" type="submit" value="Save"/>
+{% if push.uuid != null and push.status != 2 %}
+			<button class="btn btn-warning" id="push_notification" value=""/>Save and send push notification</button>
+{% endif %}
 		</div>
 	</form>
 

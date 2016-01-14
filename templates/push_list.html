@@ -10,7 +10,7 @@
 				<th>Status</th>
 				<th>Alert</th>
 				<th>Object Type</th>
-				<th>Object uuid</th>
+				<th>Published</th>
 			</tr>
 		</thead>
 		<tbody>
@@ -19,8 +19,7 @@
 				<td>{% if push.status == 1 %}Unsent{% elif push.status==2 %}Sent{% elif push.status==0 %}Redacted{% endif %}</td>
 				<td><a href="/push/{{ push.uuid }}">{{ push.title }}</a></td>
 				<td>{{ push.object_type }}</td>
-				<td>{{ push.object_uuid }}</td>
-				<td>{% if push.status == 2 %}{{ news.timestamp_publish }}{% else %}Not published{% endif %}</td>
+				<td>{% if push.status == 2 %}{{ push.timestamp_publish }}{% else %}Not published{% endif %}</td>
 			</tr>
 {% endfor %}
 		</tbody>
