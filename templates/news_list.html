@@ -1,0 +1,25 @@
+{% include '_header.html' %}
+
+	<div class="breadcrumb"><a href="/">Home</a> &rsaquo; List of news</div>
+
+	<h1>List of newss</h1>
+	<table class="table table-striped">
+		<thead>
+			<tr>
+				<th>News Title</th>
+				<th>News Type</th>
+				<th>Publish Date</th>
+			</tr>
+		</thead>
+		<tbody>
+{% for news in newss: %}
+			<tr{% if news.status == 0 %} class="redacted"{% endif %}>
+				<td><a href="/news/{{ news.uuid }}">{{ news.title }}</a></td>
+				<td>{{ news.news_type }}</td>
+				<td>{{ news.timestamp_publish }}</td>
+			</tr>
+{% endfor %}
+		</tbody>
+	</table>
+
+{% include '_footer.html' %}

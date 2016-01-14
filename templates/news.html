@@ -1,0 +1,59 @@
+{% include '_header.html' %}
+
+	<div class="breadcrumb"><a href="/">Home</a> &rsaquo; <a href="/news/list">List of news</a> &rsaquo; {{ news.title }}</div>
+
+{% if updated: %}
+	<div class="status">Record updated. {{ msg }}</div>
+{% endif %}
+
+	<form class="update" action="/news/{{ news.uuid }}" method="POST">
+		<h1>Article: {{ news.title }}</h1>
+{% if news.image_url: %}
+		<img src="{{ news.image_url }}" class="news">
+{% endif %}
+		<div>
+			<div class="fieldname">Title:</div> <input type="text" class="text-m" name="title" value="{{ news.title }}" />
+		</div>
+		<div>
+			<div class="fieldname">News Type:</div> <input type="text" class="text-m" name="article_type" value="{{ news.article_type }}" />
+		</div>
+		<div>
+			<div class="fieldname">News Category:</div> <input type="text" class="text-m" name="article_category" value="{{ news.article_category }}" />
+		</div>
+		<div>
+			<div class="fieldname">News ID:</div> <input type="text" class="text-m" name="article_id" value="{{ news.article_id }}" />
+		</div>
+		<div>
+			<div class="fieldname">Site:</div> <input type="text" class="text-m" name="site" value="{{ news.site }}" />
+		</div>
+		<div>
+			<div class="fieldname">URL:</div> <input type="text" class="text-m" name="url" value="{{ news.url }}" />
+		</div>
+		<div>
+			<div class="fieldname">Image URL:</div> <input type="text" class="text-m" name="image_url" value="{{ news.image_url }}" />
+		</div>
+		<div>
+			<div class="fieldname">Excerpt:</div> <textarea class="textarea-s" name="excerpt"> {{ news.excerpt }}</textarea>
+		</div>
+		<div>
+			<div class="fieldname">Excerpt HTML:</div> <textarea class="textarea-s" name="excerpt_html"> {{ news.excerpt_html }}</textarea>
+		</div>
+		<div>
+			<div class="fieldname">Body:</div> <textarea class="textarea-m" name="body"> {{ news.body }}</textarea>
+		</div>
+		<div>
+			<div class="fieldname">Body HTML:</div> <textarea class="textarea-m" name="body_html"> {{ news.body_html }}</textarea>
+		</div>
+		<div>
+			<div class="fieldname">Body HTML (No Style):</div> <textarea class="textarea-m" name="body_html_nostyle"> {{ news.body_html_nostyle }}</textarea>
+		</div>
+		<div>
+			<select name="status">
+				<option value="1" {% if news.status == 1 %}selected {% endif %} />Visible</option>
+				<option value="0" {% if news.status == 0 %}selected {% endif %} />Redacted</option>
+			</select>
+			<input type="submit" />
+		</div>
+	</form>
+
+{% include '_footer.html' %}
