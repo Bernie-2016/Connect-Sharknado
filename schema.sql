@@ -88,4 +88,3 @@ CREATE TABLE article
   body_html_nostyle text,
   CONSTRAINT title_article_type UNIQUE (title, article_type) -- No duplicates with the same title and article type
 );
-COMMENT ON CONSTRAINT title_article_type ON article IS 'No duplicates with the same title and article type';
