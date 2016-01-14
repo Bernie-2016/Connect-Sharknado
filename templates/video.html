@@ -24,6 +24,10 @@
 			<div class="fieldname">Description:</div> <textarea name="description" class="textarea-m">{{ video.description }}</textarea>
 		</div>
 		<div>
+			<select name="status">
+				<option value="1" {% if video.status == 1 %}selected {% endif %} />Visible</option>
+				<option value="0" {% if video.status == 0 %}selected {% endif %} />Redacted</option>
+			</select>
 			<input type="submit" />
 		</div>
 	</form>

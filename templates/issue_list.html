@@ -12,7 +12,7 @@
 		</thead>
 		<tbody>
 {% for issue in issues: %}
-			<tr>
+			<tr{% if issue.status == 0 %} class="redacted"{% endif %}>
 				<td><a href="/issue/{{ issue.uuid }}">{{ issue.title }}</a></td>
 				<td>{{ issue.timestamp_publish }}</td>
 			</tr>

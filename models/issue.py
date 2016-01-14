@@ -20,19 +20,17 @@ class IssueProvider (model.Provider):
         with self.get_db_cursor() as cur:
             cur.execute("INSERT INTO issue (uuid, url, site, lang, title, body, body_html, description, description_html, timestamp_creation, timestamp_publish) VALUES(%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)", (record["uuid"], record["url"], record["site"], record["lang"], record["title"], record["body"], record["body_html"], record["description"], record["description_html"], record["timestamp_creation"], record["timestamp_publish"],))
             return Issue(record)
-
     def update (self, record, request):
         msg = "Updating issue record for '{0}'."
         logging.info(msg.format(record.title.encode("utf8")))
 
         with self.get_db_cursor() as cur:
-            record.title = request.form["title"]
-            record.url = request.form["url"]
-            record.site = request.form["site"]
-            record.lang = request.form["lang"]
-            record.description = request.form["description"]
+            for k in request.form:
+                setattr(record, k, request.form[k])
 
-            cur.execute("UPDATE issue SET (url, site, lang, title, body, body_html, description, description_html, timestamp_publish) = (%s, %s, %s, %s, %s, %s, %s, %s, %s) WHERE uuid=%s", (record.url, record.site, record.lang, record.title, record.body, record.body_html, record.description, record.description_html, record.timestamp_publish, record.uuid,))
+            record.status = int(request.form["status"])
+
+            cur.execute("UPDATE issue SET (status, url, site, lang, title, body, body_html, description, description_html, timestamp_publish) = (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s) WHERE uuid=%s", (record.status, record.url, record.site, record.lang, record.title, record.body, record.body_html, record.description, record.description_html, record.timestamp_publish, record.uuid,))
             return True
 
     def exists (self, uuid):
@@ -42,6 +40,16 @@ class IssueProvider (model.Provider):
     def exists_by_url (self, url):
         """ Returns True if record with issue_id exists """
         return self.read_by_url (url) is not None
+
+    def get_all_languages (self):
+        with self.get_db_cursor() as cur:
+            cur.execute ("SELECT DISTINCT lang FROM issue", ())
+            return map (lambda x: x['lang'], cur)
+
+    def get_all_sites (self):
+        with self.get_db_cursor() as cur:
+            cur.execute ("SELECT DISTINCT site FROM issue", ())
+            return map (lambda x: x['site'], cur)
 
     def make_model (self, props):
         return Issue (props)
