@@ -1,0 +1,12 @@
+{% include '_header.html' %}
+
+	<div class="breadcrumb"><a href="/">Home</a> &rsaquo; List of articles</div>
+
+	<h1>List of articles</h1>
+	<ul>
+{% for article in articles: %}
+		<li><a href="/article/{{ article.uuid }}">{{ article.title }}</a></li>
+{% endfor %}
+	</ul>
+
+{% include '_footer.html' %}
