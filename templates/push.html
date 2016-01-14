@@ -1,0 +1,47 @@
+{% include '_header.html' %}
+	<div class="breadcrumb"><a href="/">Home</a> &rsaquo; <a href="/push/list">Push queue</a> &rsaquo; {{ push.title }}</div>
+
+{% if updated: %}
+	<div class="status">Record updated. {{ msg }}</div>
+{% endif %}
+
+{% if push.uuid == null %}
+	<form class="create" action="/push/create" method="POST">
+		<h1>Add Manual Push Notification:</h1>
+{% else %}
+	<form class="update" action="/push/{{ push.uuid }}" method="POST">
+		<h1>Push Notification: {{ push.title }}</h1>
+{% endif %}
+
+		<div>
+			<div class="fieldname">Alert Text:</div> <input type="text" class="text-m" name="title" value="{{ push.title }}" />
+		</div>
+		<div>
+			<div class="fieldname">Original object Type:</div> <input type="text" class="text-m" name="object_type" value="{{ push.object_type }}" />
+		</div>
+		<div>
+			<div class="fieldname">Original object uuid:</div> <input type="text" class="text-m" name="object_uuid" value="{{ push.object_uuid }}" />
+		</div>
+		<div>
+			<a href="/{{ push.object_type }}/{{ push.object_uuid }}">Original item</a>
+		</div>
+		<div>
+			<div class="fieldname">Date pushed:</div> <input type="text" class="text-m" name="timestamp_publish" value="{{ push.timestamp_publish }}" />
+		</div>
+		<div>
+			<div class="fieldname">URL:</div> <input type="text" class="text-m" name="url" value="{{ push.url }}" />
+		</div>
+		<div>
+			<div class="fieldname">Body:</div> <textarea class="textarea-m" name="body">{{ push.body }}</textarea>
+		</div>
+		<div>
+			<select name="status">
+				<option value="2" {% if push.status == 2 %}selected {% endif %} />Sent</option>
+				<option value="1" {% if push.status == 1 %}selected {% endif %} />Unsent</option>
+				<option value="0" {% if push.status == 0 or push.status == null %}selected {% endif %} />Redacted</option>
+			</select>
+			<input type="submit" />
+		</div>
+	</form>
+
+{% include '_footer.html' %}

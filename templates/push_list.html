@@ -1,0 +1,29 @@
+{% include '_header.html' %}
+
+	<div class="breadcrumb"><a href="/">Home</a> &rsaquo; Push queue</div>
+	
+	<div class="create_button"><a href="/push/create">+ Add manual push</a></div>
+	<h1>Push queue</h1>
+	<table class="table table-striped">
+		<thead>
+			<tr>
+				<th>Status</th>
+				<th>Alert</th>
+				<th>Object Type</th>
+				<th>Object uuid</th>
+			</tr>
+		</thead>
+		<tbody>
+{% for push in pushes: %}
+			<tr{% if push.status == 0 %} class="redacted"{% elif push.status==2 %} class="push-sent"{% endif %}>
+				<td>{% if push.status == 1 %}Unsent{% elif push.status==2 %}Sent{% elif push.status==0 %}Redacted{% endif %}</td>
+				<td><a href="/push/{{ push.uuid }}">{{ push.title }}</a></td>
+				<td>{{ push.object_type }}</td>
+				<td>{{ push.object_uuid }}</td>
+				<td>{% if push.status == 2 %}{{ news.timestamp_publish }}{% else %}Not published{% endif %}</td>
+			</tr>
+{% endfor %}
+		</tbody>
+	</table>
+
+{% include '_footer.html' %}
