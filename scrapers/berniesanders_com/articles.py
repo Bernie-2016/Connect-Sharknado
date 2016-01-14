@@ -6,18 +6,11 @@ from datetime import datetime
 from dateutil import parser
 from HTMLParser import HTMLParser
 
+from models.article import ArticleProvider
+from scrapers.scraper import Scraper
+
 logging.basicConfig(format="%(asctime)s - %(levelname)s : %(message)s",
                     level=logging.INFO)
-
-if __name__ == "__main__":
-    if __package__ is None:
-        import sys
-        from os import path
-        sys.path.append(path.dirname(path.dirname(path.abspath(__file__))))
-        from scraper import Scraper
-    else:
-        from ..scraper import Scraper
-
 
 class ArticlesScraper(Scraper):
 
@@ -25,6 +18,7 @@ class ArticlesScraper(Scraper):
         Scraper.__init__(self)
         self.url = "https://berniesanders.com/daily/"
         self.html = HTMLParser()
+        self.article_provider = ArticleProvider()
 
     def retrieve_article(self, url):
         for x in range(3):
@@ -47,9 +41,10 @@ class ArticlesScraper(Scraper):
         soup = self.get(self.url)
         content = soup.find("section", {"id": "content"})
         for article in content.findAll("article"):
+            
             rec = {
-                "inserted_at": datetime.now(),
-                "created_at": parser.parse(article.time["datetime"]),
+                "image_url": "",
+                "timestamp_publish": parser.parse(article.time["datetime"]),
                 "site": "berniesanders.com",
                 "lang": "en",
                 "article_type": "DemocracyDaily",
@@ -69,6 +64,7 @@ class ArticlesScraper(Scraper):
             if text and not html:
                 rec["body"], rec["body_html"] = text, text
                 rec['article_type'] = "ExternalLink"
+                rec["body_html_nostyle"] = ""
             elif text and html:
                 rec["body"], rec["body_html"] = text, html
 
@@ -80,22 +76,17 @@ class ArticlesScraper(Scraper):
                 except KeyError:
                     article["image_url"] = image
 
-            query = {
-                "title": rec["title"],
-                "article_type": rec["article_type"]
-            }
-
             msg = ""
-            if not self.db.articles.find(query).limit(1).count():
-                msg = "Inserting '{0}', created {1}"
-                self.db.articles.insert_one(rec)
+            if self.article_provider.exists_by_title_article_type(rec["title"], rec["article_type"]):
+                print "found"
             else:
-                msg = "Updating '{0}', created {1}"
-                self.db.articles.update_one(query, {"$set": rec})
+                print "not found"
+                msg = "Inserting '{0}', created {1}"
+                self.article_provider.create(rec)
 
             logging.info(msg.format(
                 rec["title"].encode("utf8"),
-                str(rec["created_at"])
+                str(rec["timestamp_publish"])
             ))
 
 if __name__ == "__main__":

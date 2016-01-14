@@ -2,22 +2,14 @@ import logging
 import requests
 import json
 import os
+
 from models.video import VideoProvider
+from scrapers.scraper import Scraper
 
 from datetime import datetime
 
 logging.basicConfig(format="%(asctime)s - %(levelname)s : %(message)s",
                     level=logging.INFO)
-
-if __name__ == "__main__":
-    if __package__ is None:
-        import sys
-        from os import path
-        sys.path.append(path.dirname(path.dirname(path.abspath(__file__))))
-        from scraper import Scraper
-    else:
-        from ..scraper import Scraper
-
 
 class Bernie2016VideosScraper(Scraper):
     def __init__(self):
@@ -56,13 +48,14 @@ class Bernie2016VideosScraper(Scraper):
           
           record = self.translate(item)
           record["description"] = self.fetch_full_description(idJson["videoId"])
+          record["title"] = record["title"].replace(" | Bernie Sanders", "")
 
           if self.video_provider.exists_by_video_id(idJson["videoId"]):
             print "found"
           else:
             print "not found"
             msg = "Inserting record for '{0}'."
-            logging.info(msg.format(record["title"]))
+            logging.info(msg.format(record["title"].encode("utf8")))
             record["timestamp_creation"] = datetime.now()
             self.video_provider.create(record)
 

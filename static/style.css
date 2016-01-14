@@ -1,0 +1,23 @@
+.status {
+	font-size: 14px;
+	font-weight: bold;
+	padding: 0 0 0 20px;
+}
+
+form.update div {
+	padding: 5px 0;
+}
+
+input.text-m {
+	width: 600px;
+}
+
+textarea.textarea-s {
+	width: 600px;
+	height: 100px;
+}
+
+textarea.textarea-m {
+	width: 600px;
+	height: 300px;
+}

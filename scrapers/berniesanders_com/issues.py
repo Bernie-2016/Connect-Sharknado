@@ -6,17 +6,11 @@ from datetime import datetime
 from dateutil import parser
 from HTMLParser import HTMLParser
 
+from models.issue import IssueProvider
+from scrapers.scraper import Scraper
+
 logging.basicConfig(format="%(asctime)s - %(levelname)s : %(message)s",
                     level=logging.INFO)
-
-if __name__ == "__main__":
-    if __package__ is None:
-        import sys
-        from os import path
-        sys.path.append(path.dirname(path.dirname(path.abspath(__file__))))
-        from scraper import Scraper
-    else:
-        from ..scraper import Scraper
 
 
 class IssuesScraper(Scraper):
@@ -25,40 +19,39 @@ class IssuesScraper(Scraper):
         Scraper.__init__(self)
         self.url = "https://berniesanders.com/issues/feed/"
         self.html = HTMLParser()
+        self.issue_provider = IssueProvider()
 
     def collect_urls(self):
-        recs = []
+        records = []
         items = self.get(self.url).findAll("item")
         for item in items:
-            rec = {
-                "inserted_at": datetime.now(),
+            record = {
                 "title": self.html.unescape(item.title.text),
-                "created_at": parser.parse(item.pubdate.text),
+                "timestamp_publish": parser.parse(item.pubdate.text),
                 "site": "berniesanders.com",
                 "lang": "en",
-                "article_type": "Issues",
                 "description_html": item.description.text,
                 "description": self.html.unescape(
                     BeautifulSoup(item.description.text).p.text),
                 "url": item.link.nextSibling
             }
-            recs.append(rec)
-        return recs
+            records.append(record)
+        return records
 
-    def retrieve(self, rec):
-        soup = self.get(rec["url"]).find("section", {"id": "content"})
+    def retrieve(self, record):
+        soup = self.get(record["url"]).find("section", {"id": "content"})
         soup = self.sanitize_soup(soup)
         while soup.article.style is not None:
             soup.article.style.extract()
-        rec["body_html"] = str(soup.article)
+        record["body_html"] = str(soup.article)
         text = []
         for elem in soup.article.recursiveChildGenerator():
             if isinstance(elem, types.StringTypes):
                 text.append(self.html.unescape(elem.strip()))
             elif elem.name == 'br':
                 text.append("")
-        rec["body"] = "\n".join(text)
-        return rec
+        record["body"] = "\n".join(text)
+        return record
 
     def go(self):
         urls = self.collect_urls()
@@ -66,24 +59,15 @@ class IssuesScraper(Scraper):
             logging.critical("Could not retrieve issues.")
             sys.exit(1)
         for url in urls:
-            rec = self.retrieve(url)
-            query = {
-                "title": rec["title"],
-                "article_type": rec["article_type"]
-            }
-
-            msg = ""
-            if not self.db.articles.find(query).limit(1).count():
-                msg = "Inserting '{0}', created {1}"
-                self.db.articles.insert_one(rec)
+            record = self.retrieve(url)
+            if self.issue_provider.exists_by_url(record["url"]):
+                print "found"
             else:
-                msg = "Updating '{0}', created {1}"
-                self.db.articles.update_one(query, {"$set": rec})
+                msg = "Inserting record for '{0}'."
+                logging.info(msg.format(record["title"].encode("utf8")))
+                record["timestamp_creation"] = datetime.now()
+                self.issue_provider.create(record)
 
-            logging.info(msg.format(
-                rec["title"].encode("utf8"),
-                str(rec["created_at"])
-            ))
 
 if __name__ == "__main__":
     i = IssuesScraper()
