@@ -26,18 +26,10 @@ class ParseWrapper:
         self.default_channels = c['parse_default_channels']
         self.base_uri = 'https://api.parse.com/1'
 
-    def push (self, alert, action, identifier, channels=None):
-        if channels is None:
-            channels = self.default_channels
-
-        if isinstance(channels, list) is False:
-            msg = "Bad channels is not a list: {0}"
-            logging.info(msg.format(channels))
-            sys.exit(1)           
-
+    def push (self, alert, action, identifier):
         payload = \
         {
-            "channels": channels,
+            "where": {},
             "data" : { 
                 "action": action, 
                 "alert": alert, 
@@ -64,7 +56,7 @@ class ParseWrapper:
             return conf
 
     def test(self):
-        alert = "Sanders Campaign Statement on Clinton Campaign's New Hampshire Insults"
+        alert = "I am target to Everyone hopefully"
         identifier = "e8021067-ece6-424e-acd8-5bd4d9b4f011"
         action = "openNewsArticle"
     	self.push(alert, action, identifier)
