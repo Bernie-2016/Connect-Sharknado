@@ -48,7 +48,7 @@ CREATE TABLE event (
     venue_state text,
     venue_zip integer,
     is_official boolean,
-    timestamp_creation timestamp with time zone,
+    timestamp_creation timestamp with time zone
 );
 
 CREATE UNIQUE INDEX index_event_uuid ON event (uuid);
@@ -92,7 +92,7 @@ CREATE TABLE article (
     body_html text,
     body_html_nostyle text,
     timestamp_creation timestamp with time zone,
-    timestamp_publish timestamp with time zone
+    timestamp_publish timestamp with time zone,
     CONSTRAINT title_article_type UNIQUE (title, article_type) -- No duplicates with the same title and article type
 );
 
