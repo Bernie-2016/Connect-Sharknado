@@ -164,7 +164,7 @@ class ElasticSearchWrapper:
             else:
                 parent = None
 
-            return SearchData (res['_id'], res['_index'], res['_type'], res['_source']['body'], parent)
+            return SearchData (res['_id'], res['_index'], res['_type'], res['_source'], parent)
         else:
             return None
 
