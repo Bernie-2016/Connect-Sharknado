@@ -39,6 +39,16 @@ class VideoProvider (model.Provider):
         """ Returns True if record with video_id exists """
         return self.read_by_video_id (video_id) is not None
 
+    def get_all_sites (self):
+        with self.get_db_cursor() as cur:
+            cur.execute ("SELECT DISTINCT site FROM video", ())
+            sites = []
+
+            for row in cur:
+                sites.append (row['site'])
+
+            return sites
+
     def make_model (self, props):
         return Video (props)
 
