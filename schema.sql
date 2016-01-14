@@ -74,6 +74,7 @@ CREATE UNIQUE INDEX index_issue_url ON video (url);
 
 CREATE TABLE article (
   uuid uuid NOT NULL,
+  article_id text,
   timestamp_creation timestamp with time zone,
   timestamp_publish timestamp with time zone,
   title text,
@@ -91,3 +92,5 @@ CREATE TABLE article (
   CONSTRAINT title_article_type UNIQUE (title, article_type) -- No duplicates with the same title and article type
 )
 CREATE UNIQUE INDEX index_article_uuid ON article (uuid);
+
+CREATE UNIQUE INDEX index_article_id ON article (article_id);
