@@ -20,11 +20,24 @@ tr.redacted a {
 	color: #999;
 }
 
-tr.sent a {
+tr.push-sent a {
 	color: #0A0;
 }
 
+.table-striped>tbody>tr.push-sent:nth-of-type(even) {
+    background-color: #C3EFC9;
+    opacity: 0.6;
+}
 
+.table-striped>tbody>tr.push-sent:nth-of-type(odd) {
+    background-color: #C6FFCD;
+    opacity: 0.6;
+}
+
+.sent-warning {
+	color: red;
+	font-size: 14px;
+}
 
 .status {
 	font-size: 14px;
