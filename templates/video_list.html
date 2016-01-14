@@ -3,10 +3,21 @@
 	<div class="breadcrumb"><a href="/">Home</a> &rsaquo; List of videos</div>
 
 	<h1>List of videos</h1>
-	<ul>
+	<table class="table table-striped">
+		<thead>
+			<tr>
+				<th>Video Title</th>
+				<th>Publish Date</th>
+			</tr>
+		</thead>
+		<tbody>
 {% for video in videos: %}
-		<li><a href="/video/{{ video.uuid }}">{{ video.title }}</a></li>
+			<tr>
+				<td><a href="/video/{{ video.uuid }}">{{ video.title }}</a></td>
+				<td>{{ video.timestamp_publish }}</td>
+			</tr>
 {% endfor %}
-	</ul>
+		</tbody>
+	</table>
 
 {% include '_footer.html' %}

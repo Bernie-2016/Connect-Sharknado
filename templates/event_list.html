@@ -3,10 +3,23 @@
 	<div class="breadcrumb"><a href="/">Home</a> &rsaquo; List of events</div>
 
 	<h1>List of events</h1>
-	<ul>
+	<table class="table table-striped">
+		<thead>
+			<tr>
+				<th>Event Title</th>
+				<th>Date & Time</th>
+				<th>Location</th>
+			</tr>
+		</thead>
+		<tbody>
 {% for event in events: %}
-		<li><a href="/event/{{ event.uuid }}">{{ event.title }}</a></li>
+			<tr>
+				<td><a href="/event/{{ event.uuid }}">{{ event.title }}</a></td>
+				<td>{{ event.start_time }}</td>
+				<td>{{ event.venue_city + ', ' + event.venue_state }}</td>
+			</tr>
 {% endfor %}
-	</ul>
+		</tbody>
+	</table>
 
 {% include '_footer.html' %}

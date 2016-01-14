@@ -18,12 +18,16 @@ class ArticleProvider (model.Provider):
         record["timestamp_creation"] = datetime.now()
 
         with self.get_db_cursor() as cur:
-            cur.execute("INSERT INTO article (uuid, timestamp_creation, timestamp_publish, title, article_type, site, lang, excerpt_html, excerpt, article_category, url, image_url, body, body_html, body_html_nostyle) VALUES(%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)", (record["uuid"], record["timestamp_creation"], record["timestamp_publish"], record["title"], record["article_type"], record["site"], record["lang"], record["excerpt_html"], record["excerpt"], record["article_category"], record["url"], record["image_url"], record["body"], record["body_html"], record["body_html_nostyle"]))
+            cur.execute("INSERT INTO article (uuid, article_id, timestamp_creation, timestamp_publish, title, article_type, site, lang, excerpt_html, excerpt, article_category, url, image_url, body, body_html, body_html_nostyle) VALUES(%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)", (record["uuid"], record["article_id"], record["timestamp_creation"], record["timestamp_publish"], record["title"], record["article_type"], record["site"], record["lang"], record["excerpt_html"], record["excerpt"], record["article_category"], record["url"], record["image_url"], record["body"], record["body_html"], record["body_html_nostyle"]))
             return Article(record)
 
     def exists (self, uuid):
         """ Returns True if record with uuid exists """
         return self.read (uuid) is not None
+
+    def exists_by_article_id (self, article_id):
+        """ Returns True if record with article_id exists """
+        return self.read_by_article_id (article_id) is not None
 
     def exists_by_title_article_type (self, title, article_type):
         """ Returns True if record with title and article_type exists """
@@ -31,6 +35,16 @@ class ArticleProvider (model.Provider):
 
     def make_model (self, props):
         return Article (props)
+
+    def get_all(self):
+        with self.get_db_cursor() as cur:
+            cur.execute("SELECT * FROM article ORDER BY timestamp_publish DESC")
+            res = cur.fetchall()
+            returns = []
+            for record in res:
+                if record is not None:
+                    returns.append(Article(record))
+            return returns
 
     def read (self, uuid):
         with self.get_db_cursor() as cur:
@@ -41,6 +55,16 @@ class ArticleProvider (model.Provider):
                 return Article (res)
             else:
                 return None
+
+    def read_by_article_id (self, article_id):
+       with self.get_db_cursor() as cur:
+           cur.execute("SELECT * FROM article WHERE article_id = (%s)", (article_id,))
+           res = cur.fetchone()
+    
+           if res is not None:
+               return Article (res)
+           else:
+               return None
 
     def read_by_title_article_type (self, title, article_type):
         with self.get_db_cursor() as cur:

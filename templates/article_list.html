@@ -1,0 +1,25 @@
+{% include '_header.html' %}
+
+	<div class="breadcrumb"><a href="/">Home</a> &rsaquo; List of articles</div>
+
+	<h1>List of articles</h1>
+	<table class="table table-striped">
+		<thead>
+			<tr>
+				<th>Article Title</th>
+				<th>Article Type</th>
+				<th>Publish Date</th>
+			</tr>
+		</thead>
+		<tbody>
+{% for article in articles: %}
+			<tr>
+				<td><a href="/article/{{ article.uuid }}">{{ article.title }}</a></td>
+				<td>{{ article.article_type }}</td>
+				<td>{{ article.timestamp_publish }}</td>
+			</tr>
+{% endfor %}
+		</tbody>
+	</table>
+
+{% include '_footer.html' %}
