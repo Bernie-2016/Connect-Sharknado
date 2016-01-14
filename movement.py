@@ -5,27 +5,60 @@ reload(sys)
 sys.setdefaultencoding('utf8')
 
 from flask import Flask, request, session, url_for, redirect, render_template, abort, g, flash
+from flask_httpauth import HTTPBasicAuth
+
 from datetime import datetime
 
 from models.event import EventProvider
 from models.issue import IssueProvider
 from models.video import VideoProvider
 from models.article import ArticleProvider
+from models.news import NewsProvider
 
 app = Flask(__name__)
 app.config.from_object(__name__)
+auth = HTTPBasicAuth()
+
+users = {
+	'movementapp2016' : 'dasH6Vek8Wuj1U'
+}
+
+@auth.get_password
+def get_pw(username):
+    if username in users:
+        return users.get(username)
+    return None
 
 @app.route('/')
+@auth.login_required
 def greeting():
 	return render_template('index.html')
 
 
+@app.route('/news/list')
+@auth.login_required
+def news_list():
+	newss = news_provider.get_all()
+	return render_template('news_list.html', newss=newss)
+
+@app.route('/news/<uuid:news_uuid>', methods=['GET', 'POST'])
+@auth.login_required
+def news_detail(news_uuid):
+	news = news_provider.read(news_uuid)
+	updated = False
+	if request.method == 'POST' and news_provider.update(news, request):
+		updated = True
+	return render_template('news.html', news=news, updated=updated)
+
+
 @app.route('/article/list')
+@auth.login_required
 def article_list():
 	articles = article_provider.get_all()
 	return render_template('article_list.html', articles=articles)
 
 @app.route('/article/<uuid:article_uuid>', methods=['GET', 'POST'])
+@auth.login_required
 def article_detail(article_uuid):
 	article = article_provider.read(article_uuid)
 	updated = False
@@ -35,11 +68,13 @@ def article_detail(article_uuid):
 
 
 @app.route('/event/list')
+@auth.login_required
 def event_list():
 	events = event_provider.get_all()
 	return render_template('event_list.html', events=events)
 
 @app.route('/event/<uuid:event_uuid>', methods=['GET', 'POST'])
+@auth.login_required
 def event_detail(event_uuid):
 	event = event_provider.read(event_uuid)
 	updated = False
@@ -49,6 +84,7 @@ def event_detail(event_uuid):
 
 
 @app.route('/video/list')
+@auth.login_required
 def video_list():
 	videos = video_provider.get_all()
 	return render_template('video_list.html', videos=videos)
@@ -63,11 +99,13 @@ def video_detail(video_uuid):
 
 
 @app.route('/issue/list')
+@auth.login_required
 def issue_list():
 	issues = issue_provider.get_all()
 	return render_template('issue_list.html', issues=issues)
 
 @app.route('/issue/<uuid:issue_uuid>', methods=['GET', 'POST'])
+@auth.login_required
 def issue_detail(issue_uuid):
 	issue = issue_provider.read(issue_uuid)
 	updated = False
@@ -89,4 +127,5 @@ if __name__ == '__main__':
 		issue_provider = IssueProvider()
 		video_provider = VideoProvider()
 		article_provider = ArticleProvider()
+		news_provider = NewsProvider()
 		app.run(host=conf['host'], debug=conf['debug'])

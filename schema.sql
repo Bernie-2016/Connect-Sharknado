@@ -108,8 +108,7 @@ CREATE TABLE news (
   image_url text,
   body text,
   body_html text,
-  body_html_nostyle text,
-  CONSTRAINT title_news_type UNIQUE (title, news_type) -- No duplicates with the same title and news type
+  body_html_nostyle text
 );
 CREATE UNIQUE INDEX index_news_uuid ON news (uuid);
 CREATE UNIQUE INDEX index_news_id ON news (news_id);

@@ -1,3 +1,13 @@
+.main-menu {
+	padding: 20px 0;
+	font-size: 20px;
+}
+
+.main-menu li {
+	border: 1px solid #ccc;
+	padding: 10px 20px;
+}
+
 tr.redacted a {
 	color: #999;
 }
