@@ -5,15 +5,16 @@ DROP TABLE IF EXISTS article;
 
 CREATE TABLE video (
     uuid uuid NOT NULL,
+    status integer,
     video_id text,
     url text,
     site text,
     title text,
     description text,
+    description_snippet text,
     thumbnail_url text,
     timestamp_creation timestamp with time zone,
-    timestamp_publish timestamp with time zone,
-    description_snippet text
+    timestamp_publish timestamp with time zone
 );
 
 CREATE UNIQUE INDEX index_video_uuid ON video (uuid);
@@ -23,6 +24,7 @@ CREATE UNIQUE INDEX index_video_id ON video (video_id);
 
 CREATE TABLE event (
     uuid uuid NOT NULL,
+    status integer,
     event_id text,
     event_id_obfuscated text,
     url text,
@@ -45,8 +47,8 @@ CREATE TABLE event (
     venue_city text,
     venue_state text,
     venue_zip integer,
+    is_official boolean,
     timestamp_creation timestamp with time zone,
-    is_official boolean
 );
 
 CREATE UNIQUE INDEX index_event_uuid ON event (uuid);
@@ -56,11 +58,11 @@ CREATE UNIQUE INDEX index_event_id ON event (event_id);
 
 CREATE TABLE issue (
     uuid uuid NOT NULL,
-    url text,
+    status integer,
     site text,
     lang text,
     title text,
-    article_type text,
+    url text,
     body text,
     body_html text,
     description text,
@@ -69,15 +71,14 @@ CREATE TABLE issue (
     timestamp_publish timestamp with time zone
 );
 
-CREATE UNIQUE INDEX index_issue_uuid ON video (uuid);
+CREATE UNIQUE INDEX index_issue_uuid ON issue (uuid);
 
-CREATE UNIQUE INDEX index_issue_url ON video (url);
+CREATE UNIQUE INDEX index_issue_url ON issue (url);
 
 CREATE TABLE article (
     uuid uuid NOT NULL,
+    status integer,
     article_id text,
-    timestamp_creation timestamp with time zone,
-    timestamp_publish timestamp with time zone,
     title text,
     article_type text,
     site text,
@@ -90,6 +91,8 @@ CREATE TABLE article (
     body text,
     body_html text,
     body_html_nostyle text,
+    timestamp_creation timestamp with time zone,
+    timestamp_publish timestamp with time zone
     CONSTRAINT title_article_type UNIQUE (title, article_type) -- No duplicates with the same title and article type
 );
 

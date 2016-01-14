@@ -20,6 +20,19 @@ class ArticleProvider (model.Provider):
         with self.get_db_cursor() as cur:
             cur.execute("INSERT INTO article (uuid, article_id, timestamp_creation, timestamp_publish, title, article_type, site, lang, excerpt_html, excerpt, article_category, url, image_url, body, body_html, body_html_nostyle) VALUES(%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)", (record["uuid"], record["article_id"], record["timestamp_creation"], record["timestamp_publish"], record["title"], record["article_type"], record["site"], record["lang"], record["excerpt_html"], record["excerpt"], record["article_category"], record["url"], record["image_url"], record["body"], record["body_html"], record["body_html_nostyle"]))
             return Article(record)
+            
+    def update (self, record, request):
+        msg = "Updating article record for '{0}'."
+        logging.info(msg.format(record.title.encode("utf8")))
+
+        with self.get_db_cursor() as cur:
+            for k in request.form:
+                setattr(record, k, request.form[k])
+
+            record.status = int(request.form["status"])
+
+            cur.execute("UPDATE article SET (status, article_id, timestamp_publish, title, article_type, site, lang, excerpt_html, excerpt, article_category, url, image_url, body, body_html, body_html_nostyle) = (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s) WHERE uuid=%s", (record.status, record.article_id, record.timestamp_publish, record.title, record.article_type, record.site, record.lang, record.excerpt_html, record.excerpt, record.article_category, record.url, record.image_url, record.body, record.body_html, record.body_html_nostyle, record.uuid,))
+            return True
 
     def exists (self, uuid):
         """ Returns True if record with uuid exists """
