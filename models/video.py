@@ -21,6 +21,16 @@ class VideoProvider (model.Provider):
             cur.execute("INSERT INTO video (uuid, video_id, site, title, description, thumbnail_url, timestamp_creation, timestamp_publish, description_snippet) VALUES(%s, %s, %s, %s, %s, %s, %s, %s, %s)", (record["uuid"], record["video_id"], record["site"], record["title"], record["description"], record["thumbnail_url"], record["timestamp_creation"], record["timestamp_publish"], record["snippet"],))
             return Video(record)
 
+    def get_all(self):
+        with self.get_db_cursor() as cur:
+            cur.execute("SELECT * FROM video ORDER BY timestamp_creation DESC")
+            res = cur.fetchall()
+            returns = []
+            for record in res:
+                if record is not None:
+                    returns.append(Video(record))
+            return returns
+
     def exists (self, uuid):
         """ Returns True if record with uuid exists """
         return self.read (uuid) is not None

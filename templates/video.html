@@ -1,0 +1,31 @@
+{% include '_header.html' %}
+
+	<div class="breadcrumb"><a href="/">Home</a> &rsaquo; <a href="/video/list">List of videos</a> &rsaquo; {{ video.title }}</div>
+
+{% if updated: %}
+	<div class="status">Record updated. {{ msg }}</div>
+{% endif %}
+
+	<form class="update" action="/video/{{ video.uuid }}" method="POST">
+		<h1>Video: {{ video.title }}</h1>
+		<div>
+			<div class="fieldname">Title:</div> <input type="text" class="text-m" name="title" value="{{ video.title }}" />
+		</div>
+		<div>
+			<div class="fieldname">Video ID:</div> <input type="text" class="text-m" name="video_id" value="{{ video.video_id }}" />
+		</div>
+		<div>
+			<div class="fieldname">Site:</div> <input type="text" class="text-m" name="site" value="{{ video.site }}" />
+		</div>
+		<div>
+			<div class="fieldname">Snippet:</div> <textarea name="description_snippet" class="textarea-s">{{ video.description_snippet }}</textarea>
+		</div>
+		<div>
+			<div class="fieldname">Description:</div> <textarea name="description" class="textarea-m">{{ video.description }}</textarea>
+		</div>
+		<div>
+			<input type="submit" />
+		</div>
+	</form>
+
+{% include '_footer.html' %}
