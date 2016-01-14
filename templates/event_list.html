@@ -13,8 +13,8 @@
 		</thead>
 		<tbody>
 {% for event in events: %}
-			<tr>
-				<td><a href="/event/{{ event.uuid }}">{{ event.title }}</a></td>
+			<tr{% if event.status == 0 %} class="redacted"{% endif %}>
+				<td><a href="/event/{{ event.uuid }}">{{ event.name }}</a></td>
 				<td>{{ event.start_time }}</td>
 				<td>{{ event.venue_city + ', ' + event.venue_state }}</td>
 			</tr>

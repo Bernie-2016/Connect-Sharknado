@@ -12,7 +12,7 @@
 		</thead>
 		<tbody>
 {% for video in videos: %}
-			<tr>
+			<tr{% if video.status == 0 %} class="redacted"{% endif %}>
 				<td><a href="/video/{{ video.uuid }}">{{ video.title }}</a></td>
 				<td>{{ video.timestamp_publish }}</td>
 			</tr>

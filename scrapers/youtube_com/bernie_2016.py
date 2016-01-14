@@ -34,6 +34,7 @@ class Bernie2016VideosScraper(Scraper):
       record = {
         "site": "youtube.com",
         "video_id": idJson["videoId"],
+        "url": "https://www.youtube.com/watch?v="+idJson["videoId"],
         "title": snippetJson["title"],
         "snippet": snippetJson["description"],
         "thumbnail_url": snippetJson["thumbnails"]["high"]["url"],
