@@ -28,6 +28,7 @@ class EventProvider (connectors.elasticsearch.base.Provider):
         body = obj.__dict__.copy()
         body['uuid'] = str (body['uuid'])
         body['object_type'] = obj.object_type
+        body['location'] = { 'lon': float (body['longitude']), 'lat': float (body['latitude']) }
         return connectors.elasticsearch.base.SearchData (body['uuid'], index, doc_type, body)
 
     def get_search_filters (self):
