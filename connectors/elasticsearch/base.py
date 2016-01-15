@@ -133,7 +133,10 @@ class ElasticSearchWrapper:
 
     def get_connection (self):
         if self.connection is None:
-            self.connection = Elasticsearch(self.config['elasticsearch']['host'])
+            self.connection = Elasticsearch([
+                    {'host': self.config['elasticsearch']['host']},
+                    {'port': self.config['elasticsearch']['port']}
+                ])
 
         return self.connection
 

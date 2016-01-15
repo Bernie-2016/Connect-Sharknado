@@ -6,6 +6,7 @@ DROP TABLE IF EXISTS news;
 
 CREATE TABLE video (
     uuid uuid NOT NULL,
+    status integer,
     video_id text,
     url text,
     site text,
@@ -22,6 +23,7 @@ CREATE UNIQUE INDEX index_video_id ON video (video_id);
 
 CREATE TABLE event (
     uuid uuid NOT NULL,
+    status integer,
     event_id text,
     event_id_obfuscated text,
     url text,
@@ -53,6 +55,7 @@ CREATE UNIQUE INDEX index_event_id ON event (event_id);
 
 CREATE TABLE issue (
     uuid uuid NOT NULL,
+    status integer,
     url text,
     site text,
     lang text,
@@ -71,6 +74,7 @@ CREATE UNIQUE INDEX index_issue_url ON video (url);
 
 CREATE TABLE article (
     uuid uuid NOT NULL,
+    status integer,
     article_id text,
     timestamp_creation timestamp with time zone,
     timestamp_publish timestamp with time zone,
@@ -93,22 +97,23 @@ CREATE UNIQUE INDEX index_article_id ON article (article_id);
 
 
 CREATE TABLE news (
-  uuid uuid NOT NULL,
-  news_id text,
-  timestamp_creation timestamp with time zone,
-  timestamp_publish timestamp with time zone,
-  title text,
-  news_type text,
-  site text,
-  lang text,
-  excerpt_html text,
-  excerpt text,
-  news_category text,
-  url text,
-  image_url text,
-  body text,
-  body_html text,
-  body_html_nostyle text
+    uuid uuid NOT NULL,
+    status integer,
+    news_id text,
+    timestamp_creation timestamp with time zone,
+    timestamp_publish timestamp with time zone,
+    title text,
+    news_type text,
+    site text,
+    lang text,
+    excerpt_html text,
+    excerpt text,
+    news_category text,
+    url text,
+    image_url text,
+    body text,
+    body_html text,
+    body_html_nostyle text
 );
 CREATE UNIQUE INDEX index_news_uuid ON news (uuid);
 CREATE UNIQUE INDEX index_news_id ON news (news_id);

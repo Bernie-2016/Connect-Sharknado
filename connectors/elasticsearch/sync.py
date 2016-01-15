@@ -1,6 +1,7 @@
 from connectors.elasticsearch import VERSION
 from connectors.elasticsearch.base import ElasticSearchWrapper
 import logging
+import time
 
 class Sync:
     def __init__ (self, connection):
@@ -44,6 +45,7 @@ class Sync:
         for provider in providers:
             self.sync_provider (provider)
             self.delete_extras (provider)
+            time.sleep(2)
 
     def sync_provider (self, provider):
         """ Syncs ElasticSearch with the particular provider """
