@@ -19,9 +19,6 @@ app = Flask(__name__)
 app.config.from_object(__name__)
 auth = HTTPBasicAuth()
 
-users = {
-	'movementapp2016' : 'dasH6Vek8Wuj1U'
-}
 
 @auth.get_password
 def get_pw(username):
@@ -90,6 +87,7 @@ def video_list():
 	return render_template('video_list.html', videos=videos)
 
 @app.route('/video/<uuid:video_uuid>', methods=['GET', 'POST'])
+@auth.login_required
 def video_detail(video_uuid):
 	video = video_provider.read(video_uuid)
 	updated = False
@@ -128,4 +126,7 @@ if __name__ == '__main__':
 		video_provider = VideoProvider()
 		article_provider = ArticleProvider()
 		news_provider = NewsProvider()
+		users = {
+			conf['httpauth_username'] : conf['httpauth_password']
+		}
 		app.run(host=conf['host'], debug=conf['debug'])
