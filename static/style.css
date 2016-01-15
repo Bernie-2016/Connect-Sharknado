@@ -1,3 +1,7 @@
+body {
+	padding-bottom: 100px;
+}
+
 .main-menu {
 	padding: 20px 0;
 	font-size: 20px;
@@ -8,9 +12,19 @@
 	padding: 10px 20px;
 }
 
+th {
+	white-space: nowrap;
+}
+
 tr.redacted a {
 	color: #999;
 }
+
+tr.sent a {
+	color: #0A0;
+}
+
+
 
 .status {
 	font-size: 14px;
@@ -34,4 +48,13 @@ textarea.textarea-s {
 textarea.textarea-m {
 	width: 600px;
 	height: 300px;
+}
+
+.sharknado, a:hover {
+	cursor: url(http://162.246.8.156:5000/static/shark.cur), progress !important;
+}
+
+.video_thumbnail {
+	height: 100px;
+	padding: 20px 0 10px 0;
 }

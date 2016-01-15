@@ -118,3 +118,17 @@ CREATE TABLE news (
 );
 CREATE UNIQUE INDEX index_news_uuid ON news (uuid);
 CREATE UNIQUE INDEX index_news_id ON news (news_id);
+
+
+CREATE TABLE push (
+    uuid uuid NOT NULL,
+    status integer,
+    object_type text,
+    object_uuid uuid,
+    title text,
+    body text,
+    url text,
+    timestamp_creation timestamp with time zone,
+    timestamp_publish timestamp with time zone
+);
+CREATE UNIQUE INDEX index_push_uuid on push (uuid);

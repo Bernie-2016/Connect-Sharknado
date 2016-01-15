@@ -9,7 +9,7 @@
 	<form class="update" action="/article/{{ article.uuid }}" method="POST">
 		<h1>Article: {{ article.title }}</h1>
 {% if article.image_url: %}
-		<img src="{{ article.image_url }}" class="articleimage">
+		<img src="{{ article.image_url }}" class="article_image">
 {% endif %}
 		<div>
 			<div class="fieldname">Title:</div> <input type="text" class="text-m" name="title" value="{{ article.title }}" />

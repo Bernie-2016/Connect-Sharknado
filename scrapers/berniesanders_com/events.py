@@ -123,6 +123,7 @@ class EventScraper(Scraper):
         result["start_time"] = parser.parse(result["start_time"])
         result["event_date"] = str(result["start_time"].date())
         result["is_official"] = result["is_official"] == "1"
+        result["url"] = "https://go.berniesanders.com/page/event/detail/volunteeractivityormeetings/" + result["event_id_obfuscated"]
 
         for key in required_keys:
             if key not in result:

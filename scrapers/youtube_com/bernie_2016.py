@@ -4,6 +4,7 @@ import json
 import os
 
 from models.video import VideoProvider
+from models.push import PushProvider
 from scrapers.scraper import Scraper
 
 from datetime import datetime
@@ -26,6 +27,7 @@ class Bernie2016VideosScraper(Scraper):
         }
         self.details = Bernie2016VideoDetailScraper()
         self.video_provider = VideoProvider()
+        self.push_provider = PushProvider()
 
     def translate(self, json):
       idJson = json["id"]
@@ -58,7 +60,17 @@ class Bernie2016VideosScraper(Scraper):
             msg = "Inserting record for '{0}'."
             logging.info(msg.format(record["title"].encode("utf8")))
             record["timestamp_creation"] = datetime.now()
-            self.video_provider.create(record)
+            video = self.video_provider.create(record)
+
+            # Add push record for possible notification pushing
+            push_record = {
+              "object_type": "video",
+              "object_uuid": video.uuid,
+              "title": video.title + " - new video posted by Bernie Sanders",
+              "body": "See this new video now",
+              "url": video.url
+            }
+            push = self.push_provider.create(push_record)
 
     def fetch_full_description(self, video_id):
         self.details.params = {

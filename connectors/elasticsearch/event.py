@@ -28,7 +28,12 @@ class EventProvider (connectors.elasticsearch.base.Provider):
         body = obj.__dict__.copy()
         body['uuid'] = str (body['uuid'])
         body['object_type'] = obj.object_type
-
+        body['location'] = {
+            'lon': float (body['longitude']),
+            'lat': float (body['latitude'])
+        }
+        body['event_date'] = body['start_time']
+        
         body['venue'] = {
             'name': body['venue_name'],
             'city': body['venue_city'],

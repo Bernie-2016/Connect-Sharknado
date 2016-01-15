@@ -8,6 +8,9 @@
 
 	<form class="update" action="/video/{{ video.uuid }}" method="POST">
 		<h1>Video: {{ video.title }}</h1>
+{% if video.video_id: %}
+		<iframe id="ytplayer" type="text/html" width="640" height="390" src="http://www.youtube.com/embed/{{ video.video_id }}" frameborder="0"/></iframe>
+{% endif %}
 		<div>
 			<div class="fieldname">Title:</div> <input type="text" class="text-m" name="title" value="{{ video.title }}" />
 		</div>
@@ -16,6 +19,14 @@
 		</div>
 		<div>
 			<div class="fieldname">Site:</div> <input type="text" class="text-m" name="site" value="{{ video.site }}" />
+		</div>
+		<div>
+			<div class="fieldname">Thumbnail URL:</div> <input type="text" class="text-m" name="thumbnail_url" value="{{ video.thumbnail_url }}" />
+{% if video.thumbnail_url: %}
+			<div>
+				<img src="{{ video.thumbnail_url }}" alt="thumbnail" class="video_thumbnail" />
+			</div>
+{% endif %}
 		</div>
 		<div>
 			<div class="fieldname">Snippet:</div> <textarea name="description_snippet" class="textarea-s">{{ video.description_snippet }}</textarea>
