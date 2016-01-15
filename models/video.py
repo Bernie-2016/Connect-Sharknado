@@ -18,7 +18,7 @@ class VideoProvider (model.Provider):
         record["timestamp_creation"] = datetime.now()
 
         with self.get_db_cursor() as cur:
-            cur.execute("INSERT INTO video (uuid, video_id, site, title, description, thumbnail_url, timestamp_creation, timestamp_publish, description_snippet) VALUES(%s, %s, %s, %s, %s, %s, %s, %s, %s)", (record["uuid"], record["video_id"], record["site"], record["title"], record["description"], record["thumbnail_url"], record["timestamp_creation"], record["timestamp_publish"], record["snippet"],))
+            cur.execute("INSERT INTO video (uuid, status, video_id, site, title, description, thumbnail_url, timestamp_creation, timestamp_publish, description_snippet) VALUES(%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)", (record["uuid"], 1, record["video_id"], record["site"], record["title"], record["description"], record["thumbnail_url"], record["timestamp_creation"], record["timestamp_publish"], record["snippet"],))
             return Video(record)
 
     def update (self, record, request):
