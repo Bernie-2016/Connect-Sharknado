@@ -18,7 +18,7 @@ class IssueProvider (model.Provider):
         record["timestamp_creation"] = datetime.now()
 
         with self.get_db_cursor() as cur:
-            cur.execute("INSERT INTO issue (uuid, status, url, site, lang, title, body, body_html, description, description_html, timestamp_creation, timestamp_publish) VALUES(%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)", (record["uuid"], 1, record["url"], record["site"], record["lang"], record["title"], record["body"], record["body_html"], record["description"], record["description_html"], record["timestamp_creation"], record["timestamp_publish"],))
+            cur.execute("INSERT INTO issue (uuid, status, url, image_url, site, lang, title, article_type, body, body_html, description, description_html, timestamp_creation, timestamp_publish) VALUES(%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)", (record["uuid"], 1, record["url"], record["image_url"], record["site"], record["lang"], record["title"], 'Issues', record["body"], record["body_html"], record["description"], record["description_html"], record["timestamp_creation"], record["timestamp_publish"],))
             return Issue(record)
     def update (self, record, request):
         msg = "Updating issue record for '{0}'."
@@ -30,7 +30,7 @@ class IssueProvider (model.Provider):
 
             record.status = int(request.form["status"])
 
-            cur.execute("UPDATE issue SET (status, url, site, lang, title, body, body_html, description, description_html, timestamp_publish) = (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s) WHERE uuid=%s", (record.status, record.url, record.site, record.lang, record.title, record.body, record.body_html, record.description, record.description_html, record.timestamp_publish, record.uuid,))
+            cur.execute("UPDATE issue SET (status, url, image_url, site, lang, title, body, body_html, description, description_html, timestamp_publish) = (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s) WHERE uuid=%s", (record.status, record.url, record.image_url, record.site, record.lang, record.title, record.body, record.body_html, record.description, record.description_html, record.timestamp_publish, record.uuid,))
             return True
 
     def exists (self, uuid):

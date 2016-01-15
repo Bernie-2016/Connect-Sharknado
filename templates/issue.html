@@ -15,10 +15,16 @@
 			<div class="fieldname">URL:</div> <input type="text" class="text-m" name="url" value="{{ issue.url }}" />
 		</div>
 		<div>
+			<div class="fieldname">Image URL:</div> <input type="text" class="text-m" name="image_url" value="{{ issue.image_url }}" />
+		</div>
+		<div>
 			<div class="fieldname">Site:</div> <input type="text" class="text-m" name="site" value="{{ issue.site }}" />
 		</div>
 		<div>
 			<div class="fieldname">Language:</div> <input type="text" class="text-m" name="lang" value="{{ issue.lang }}" />
+		</div>
+		<div>
+			<div class="fieldname">Body:</div> <textarea name="body" class="textarea-m">{{ issue.body }}</textarea>
 		</div>
 		<div>
 			<div class="fieldname">Description:</div> <textarea name="description" class="textarea-m">{{ issue.description }}</textarea>

@@ -39,8 +39,15 @@ class IssuesScraper(Scraper):
         return records
 
     def retrieve(self, record):
-        soup = self.get(record["url"]).find("section", {"id": "content"})
-        soup = self.sanitize_soup(soup)
+
+        soup = self.get(record["url"])
+
+        # retrieve image from <meta property="og:image" content="https://berniesanders.com/wp-content/uploads/2015/07/072615_Bernie_NewOrleans-4382.jpg"/>
+        meta_image = soup.findAll(attrs={"property":"og:image"})
+        record["image_url"] = meta_image[0]["content"].encode('utf8')
+
+        # reset soup to content     
+        soup = self.sanitize_soup(soup.find("section", {"id": "content"}))
         while soup.article.style is not None:
             soup.article.style.extract()
         record["body_html"] = str(soup.article)
@@ -51,6 +58,7 @@ class IssuesScraper(Scraper):
             elif elem.name == 'br':
                 text.append("")
         record["body"] = "\n".join(text)
+
         return record
 
     def go(self):

@@ -57,6 +57,7 @@ CREATE TABLE issue (
     uuid uuid NOT NULL,
     status integer,
     url text,
+    image_url text,
     site text,
     lang text,
     title text,
@@ -89,7 +90,8 @@ CREATE TABLE article (
     image_url text,
     body text,
     body_html text,
-    body_html_nostyle text
+    body_html_nostyle text,
+    CONSTRAINT title_article_type UNIQUE (title, article_type) -- No duplicates with the same title and article type
 );
 CREATE UNIQUE INDEX index_article_uuid ON article (uuid);
 CREATE UNIQUE INDEX index_article_id ON article (article_id);
