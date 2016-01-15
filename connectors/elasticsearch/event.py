@@ -28,6 +28,31 @@ class EventProvider (connectors.elasticsearch.base.Provider):
         body = obj.__dict__.copy()
         body['uuid'] = str (body['uuid'])
         body['object_type'] = obj.object_type
+
+        body['venue'] = {
+            'name': body['venue_name'],
+            'city': body['venue_city'],
+            'state': body['venue_state'],
+            'zip': body['venue_zip'],
+            'location': {
+               'lon': float (body['longitude']),
+               'lat': float (body['latitude'])
+            }
+        }
+
+        for i in range(1,4):
+            src_key = "venue_address"+str(i)
+            trg_key = "address"+str(i)
+
+            if body[src_key] != '' and body[src_key] is not None:
+                body['venue'][trg_key] = body[src_key]
+
+
+        del_keys = ["latitude", "longitude", "venue_address1", "venue_address2", "venue_address3", "venue_name", "venue_city", "venue_state", "venue_zip"]
+
+        for del_key in del_keys:
+            del body[del_key]
+
         return connectors.elasticsearch.base.SearchData (body['uuid'], index, doc_type, body)
 
     def get_search_filters (self):
