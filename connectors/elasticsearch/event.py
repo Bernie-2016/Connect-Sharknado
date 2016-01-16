@@ -38,7 +38,7 @@ class EventProvider (connectors.elasticsearch.base.Provider):
             'name': body['venue_name'],
             'city': body['venue_city'],
             'state': body['venue_state'],
-            'zip': body['venue_zip'],
+            'zip': str (body['venue_zip']),
             'location': {
                'lon': float (body['longitude']),
                'lat': float (body['latitude'])
