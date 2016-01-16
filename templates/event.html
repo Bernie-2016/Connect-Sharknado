@@ -1,13 +1,13 @@
 {% include '_header.html' %}
 
-	<div class="breadcrumb"><a href="/">Home</a> &rsaquo; <a href="/event/list">List of events</a> &rsaquo; {{ event.title }}</div>
+	<div class="breadcrumb"><a href="/">Home</a> &rsaquo; <a href="/event/list">List of events</a> &rsaquo; {{ event.name }}</div>
 
 {% if updated: %}
 	<div class="status">Record updated. {{ msg }}</div>
 {% endif %}
 
 	<form class="update" action="/event/{{ event.uuid }}" method="POST">
-		<h1>Event: {{ event.title }}</h1>
+		<h1>Event: {{ event.name }}</h1>
 		<div>
 			<div class="fieldname">Title:</div> <input type="text" class="text-m" name="name" value="{{ event.name }}" />
 		</div>

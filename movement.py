@@ -23,6 +23,9 @@ app = Flask(__name__)
 app.config.from_object(__name__)
 auth = HTTPBasicAuth()
 
+#add news to ES feed
+#change parse push message to api
+#fix logging
 
 @auth.get_password
 def get_pw(username):
@@ -175,3 +178,4 @@ if __name__ == '__main__':
 		}
 		app.run(host=conf['host'], debug=conf['debug'])
 		register(conf['parse_application_id'], conf['parse_rest_api_key'], conf['parse_master_key'])
+		#Push.message("Good morning", channels=["Mike Testing"])

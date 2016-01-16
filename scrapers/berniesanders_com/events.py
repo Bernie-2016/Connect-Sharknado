@@ -4,10 +4,13 @@ import hashlib
 import hmac
 import time
 import urllib
+import json
 
+from pytz import timezone
 from datetime import datetime
 from dateutil import parser
 
+from BeautifulSoup import BeautifulStoneSoup
 from HTMLParser import HTMLParser
 
 from models.event import EventProvider
@@ -93,6 +96,8 @@ class EventScraper(Scraper):
         # Translate normal key names based on map
         result = dict((self.map.get(k, k), v) for (k, v) in result.items())
 
+        msg = json.dumps(result)
+        #logging.info(result)
         result["event_id"] = result["original_id"]
         result["venue_state"] = result["venue_state_cd"]
 
@@ -124,6 +129,18 @@ class EventScraper(Scraper):
         result["event_date"] = str(result["start_time"].date())
         result["is_official"] = result["is_official"] == "1"
         result["url"] = "https://go.berniesanders.com/page/event/detail/volunteeractivityormeetings/" + result["event_id_obfuscated"]
+
+        # Strip html tags from description
+        if result["description"] is not None:
+            soup = BeautifulStoneSoup(result["description"], convertEntities=BeautifulStoneSoup.ALL_ENTITIES)
+            result["description"] = "\n\n".join(soup.findAll(text=True))
+
+        # timezone
+        if result["start_tz"]:
+            tz = timezone(result['start_tz'])
+            normal = datetime(2009, 9, 1)
+            tz_localize = tz.localize(normal, is_dst=None)
+            result["timezone"] = tz_localize.tzname()
 
         for key in required_keys:
             if key not in result:

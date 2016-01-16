@@ -21,6 +21,18 @@ class NewsProvider (model.Provider):
             cur.execute("INSERT INTO news (uuid, status, news_id, timestamp_creation, timestamp_publish, title, news_type, site, lang, excerpt_html, excerpt, news_category, url, image_url, body, body_html, body_html_nostyle) VALUES(%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)", (record["uuid"], 1, record["news_id"], record["timestamp_creation"], record["timestamp_publish"], record["title"], record["news_type"], record["site"], record["lang"], record["excerpt_html"], record["excerpt"], record["news_category"], record["url"], record["image_url"], record["body"], record["body_html"], record["body_html_nostyle"]))
             return News(record)
 
+    def update (self, record, request):
+        msg = "Updating news record for '{0}'."
+        logging.info(msg.format(record.title.encode("utf8")))
+
+        with self.get_db_cursor() as cur:
+            for k in request.form:
+                setattr(record, k, request.form[k])
+
+            record.status = int(request.form["status"])
+            cur.execute("UPDATE news SET (status, news_id, timestamp_publish, title, news_type, site, lang, excerpt_html, excerpt, news_category, url, image_url, body, body_html, body_html_nostyle) = (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s) WHERE uuid=%s", (record.status, record.news_id, record.timestamp_publish, record.title, record.news_type, record.site, record.lang, record.excerpt_html, record.excerpt, record.news_category, record.url, record.image_url, record.body, record.body_html, record.body_html_nostyle, record.uuid,))
+            return True
+
     def exists (self, uuid):
         """ Returns True if record with uuid exists """
         return self.read (uuid) is not None
