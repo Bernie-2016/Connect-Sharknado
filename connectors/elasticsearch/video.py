@@ -31,4 +31,4 @@ class VideoProvider (connectors.elasticsearch.base.Provider):
         return connectors.elasticsearch.base.SearchData (body['uuid'], index, doc_type, body)
 
     def get_search_filters (self):
-        return [('object_type', 'issue')]
+        return [('object_type', 'video')]
