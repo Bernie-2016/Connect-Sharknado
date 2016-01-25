@@ -79,9 +79,9 @@ class ArticlesScraper(Scraper):
 
             msg = ""
             if self.article_provider.exists_by_article_id(rec["article_id"]):
-                print "found"
+                #print "found"
             else:
-                print "not found"
+                #print "not found"
                 msg = "Inserting '{0}', created {1}"
                 self.article_provider.create(rec)
 
