@@ -45,7 +45,7 @@ CREATE TABLE event (
     venue_name text,
     venue_city text,
     venue_state text,
-    venue_zip integer,
+    venue_zip text,
     timestamp_creation timestamp with time zone,
     is_official boolean
 );

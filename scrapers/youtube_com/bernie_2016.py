@@ -47,13 +47,13 @@ class Bernie2016VideosScraper(Scraper):
     def go(self):
         r = self.get(self.url, params=self.params, result_format="json")
         for item in r["items"]:
-          idJson = item["id"]
-          
+          if item["id"]["kind"] != 'youtube#video':
+            continue
           record = self.translate(item)
-          record["description"] = self.fetch_full_description(idJson["videoId"])
+          record["description"] = self.fetch_full_description(record["video_id"])
           record["title"] = record["title"].replace(" | Bernie Sanders", "")
 
-          if self.video_provider.exists_by_video_id(idJson["videoId"]):
+          if self.video_provider.exists_by_video_id(record["video_id"]):
             print "found"
           else:
             print "not found"

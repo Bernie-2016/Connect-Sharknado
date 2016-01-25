@@ -58,6 +58,16 @@ class NewsProvider (model.Provider):
                     returns.append(News(record))
             return returns
 
+    def get_all_languages (self):
+        with self.get_db_cursor() as cur:
+            cur.execute ("SELECT DISTINCT lang FROM news", ())
+            return map (lambda x: x['lang'], cur)
+
+    def get_all_sites (self):
+        with self.get_db_cursor() as cur:
+            cur.execute ("SELECT DISTINCT site FROM news", ())
+            return map (lambda x: x['site'], cur)
+
     def read (self, uuid):
         with self.get_db_cursor() as cur:
             cur.execute("SELECT * FROM news WHERE uuid = (%s)", (uuid,))

@@ -23,9 +23,9 @@ app = Flask(__name__)
 app.config.from_object(__name__)
 auth = HTTPBasicAuth()
 
-#add news to ES feed
 #change parse push message to api
 #fix logging
+#setup crons
 
 @auth.get_password
 def get_pw(username):
