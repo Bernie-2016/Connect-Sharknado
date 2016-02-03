@@ -1,6 +1,7 @@
 import time
 import sys
 import yaml
+import base64
 reload(sys)
 sys.setdefaultencoding('utf8')
 
@@ -18,6 +19,7 @@ from models.video import VideoProvider
 from models.article import ArticleProvider
 from models.news import NewsProvider
 from models.push import PushProvider
+from models.news import News
 
 app = Flask(__name__)
 app.config.from_object(__name__)
@@ -25,7 +27,6 @@ auth = HTTPBasicAuth()
 
 #change parse push message to api
 #fix logging
-#setup crons
 
 @auth.get_password
 def get_pw(username):
@@ -74,6 +75,20 @@ def push_detail(push_uuid):
 
 
 # News
+@app.route('/news/create', methods=['GET', 'POST'])
+@auth.login_required
+def news_create():
+	if request.method == 'POST':
+		data = dict((key, request.form.getlist(key)[0]) for key in request.form.keys())
+		data['timestamp_publish'] = datetime.now()
+		data['lang'] = 'en'
+
+		news = news_provider.create(data)
+		if hasattr(news, 'uuid'):
+			return redirect('/news/' + str(news.uuid))
+	else:
+		return render_template('news.html', news=News({'news_type': 'PressRelease', 'news_category': 'Press Release'}), updated=False)
+
 @app.route('/news/list')
 @auth.login_required
 def news_list():

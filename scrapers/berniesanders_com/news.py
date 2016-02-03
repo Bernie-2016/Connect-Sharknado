@@ -87,9 +87,9 @@ class NewsScraper(Scraper):
 
             msg = ""
             if self.news_provider.exists_by_news_id(rec["news_id"]):
-                #print "found"
+                print "found"
             else:
-                #print "not found"
+                print "not found"
                 msg = "Inserting '{0}', created {1}"
                 self.news_provider.create(rec)
 

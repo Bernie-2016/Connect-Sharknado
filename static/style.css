@@ -32,7 +32,7 @@ tr.sent a {
 	padding: 0 0 0 20px;
 }
 
-form.update div {
+form.update div, form.create div {
 	padding: 5px 0;
 }
 
@@ -54,7 +54,14 @@ textarea.textarea-m {
 	cursor: url(http://162.246.8.156:5000/static/shark.cur), progress !important;
 }
 
-.video_thumbnail {
-	height: 100px;
+.news_thumbnail, .video_thumbnail  {
+	height: 200px;
 	padding: 20px 0 10px 0;
+}
+
+.create_button {
+	float: right;
+	border: 1px solid #999;
+	padding: 10px 20px;
+	font-weight: boldl
 }

@@ -1,15 +1,20 @@
 {% include '_header.html' %}
-
 	<div class="breadcrumb"><a href="/">Home</a> &rsaquo; <a href="/news/list">List of news</a> &rsaquo; {{ news.title }}</div>
 
 {% if updated: %}
 	<div class="status">Record updated. {{ msg }}</div>
 {% endif %}
 
+{% if news.uuid == null %}
+	<form class="create" action="/news/create" method="POST">
+		<h1>Add News:</h1>
+{% else %}
 	<form class="update" action="/news/{{ news.uuid }}" method="POST">
 		<h1>News: {{ news.title }}</h1>
+{% endif %}
+
 {% if news.image_url: %}
-		<img src="{{ news.image_url }}" class="news">
+		<img src="{{ news.image_url }}" class="news_thumbnail">
 {% endif %}
 		<div>
 			<div class="fieldname">Title:</div> <input type="text" class="text-m" name="title" value="{{ news.title }}" />
@@ -19,6 +24,9 @@
 		</div>
 		<div>
 			<div class="fieldname">News Category:</div> <input type="text" class="text-m" name="news_category" value="{{ news.news_category }}" />
+		</div>
+		<div>
+			<div class="fieldname">Published:</div> <input type="text" class="text-m" name="timestamp_publish" value="{{ news.timestamp_publish }}" />
 		</div>
 		<div>
 			<div class="fieldname">News ID:</div> <input type="text" class="text-m" name="news_id" value="{{ news.news_id }}" />
@@ -50,7 +58,7 @@
 		<div>
 			<select name="status">
 				<option value="1" {% if news.status == 1 %}selected {% endif %} />Visible</option>
-				<option value="0" {% if news.status == 0 %}selected {% endif %} />Redacted</option>
+				<option value="0" {% if news.status == 0 or news.status == null %}selected {% endif %} />Redacted</option>
 			</select>
 			<input type="submit" />
 		</div>

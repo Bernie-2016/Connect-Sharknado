@@ -7,5 +7,7 @@ python -m scrapers.berniesanders_com.events
 python -m scrapers.berniesanders_com.news
 python -m scrapers.youtube_com.bernie_2016
 
+echo "Running all syncs..."
+python -m connectors.elasticsearch.run_sync
 
 echo "Done."
