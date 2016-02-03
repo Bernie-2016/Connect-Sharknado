@@ -123,6 +123,8 @@ class EventScraper(Scraper):
         for x in ["capacity", "attendee_count"]:
             if x in result and result[x] is not None:
                 result[x] = int(result[x])
+            else:
+                result[x] = 0
 
         # Convert str to datetime
         result["start_time"] = parser.parse(result["start_time"])
