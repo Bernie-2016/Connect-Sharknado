@@ -160,6 +160,11 @@ class EventScraper(Scraper):
 
             if self.event_provider.exists_by_event_id(record["event_id"]):
                 print "found"
+                db_event = self.event_provider.read_by_event_id(record["event_id"])
+                record["uuid"] = db_event.uuid
+                msg = "Updating record for '{0}'."
+                logging.info(msg.format(record["name"].encode("utf8")))
+                self.event_provider.update_with_hash(record)
             else:
                 print "not found"
                 msg = "Inserting record for '{0}'."
