@@ -123,6 +123,8 @@ class EventScraper(Scraper):
         for x in ["capacity", "attendee_count"]:
             if x in result and result[x] is not None:
                 result[x] = int(result[x])
+            else:
+                result[x] = 0
 
         # Convert str to datetime
         result["start_time"] = parser.parse(result["start_time"])
@@ -157,9 +159,14 @@ class EventScraper(Scraper):
             record = self.translate(result)
 
             if self.event_provider.exists_by_event_id(record["event_id"]):
-                #print "found"
+                print "found"
+                db_event = self.event_provider.read_by_event_id(record["event_id"])
+                record["uuid"] = db_event.uuid
+                msg = "Updating record for '{0}'."
+                logging.info(msg.format(record["name"].encode("utf8")))
+                self.event_provider.update_with_hash(record)
             else:
-                #print "not found"
+                print "not found"
                 msg = "Inserting record for '{0}'."
                 logging.info(msg.format(record["name"].encode("utf8")))
                 record["timestamp_creation"] = datetime.now()

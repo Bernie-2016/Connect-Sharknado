@@ -32,6 +32,15 @@ class EventProvider (model.Provider):
             cur.execute("UPDATE event SET (status, event_id, event_id_obfuscated, url, name, date, start_time, timezone, description, latitude, longitude, is_official, attendee_count, capacity, site, lang, event_type_name, venue_address1, venue_address2, venue_address3, venue_name, venue_city, venue_state, venue_zip) = (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s) WHERE uuid=%s", (record.status, record.event_id, record.event_id_obfuscated, record.url, record.name, record.date, record.start_time, record.timezone, record.description, record.latitude, record.longitude, record.is_official, record.attendee_count, record.capacity, record.site, record.lang, record.event_type_name, record.venue_address1, record.venue_address2, record.venue_address3, record.venue_name, record.venue_city, record.venue_state, record.venue_zip, record.uuid,))
             return True
 
+    def update_with_hash(self, record):
+        msg = "Updating event record for '{0}'."
+        logging.info(msg.format(record["name"].encode("utf8")))
+
+        with self.get_db_cursor() as cur:
+            cur.execute("UPDATE event SET (status, event_id, event_id_obfuscated, url, name, date, start_time, timezone, description, latitude, longitude, is_official, attendee_count, capacity, site, lang, event_type_name, venue_address1, venue_address2, venue_address3, venue_name, venue_city, venue_state, venue_zip) = (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s) WHERE uuid=%s", (record["status"], record["event_id"], record["event_id_obfuscated"], record["url"], record["name"], record["date"], record["start_time"], record["timezone"], record["description"], record["latitude"], record["longitude"], record["is_official"], record["attendee_count"], record["capacity"], record["site"], record["lang"], record["event_type_name"], record["venue_address1"], record["venue_address2"], record["venue_address3"], record["venue_name"], record["venue_city"], record["venue_state"], record["venue_zip"], record["uuid"],))
+            return True
+
+
     def get_all(self):
         with self.get_db_cursor() as cur:
             cur.execute("SELECT * FROM " + self.table_name + " ORDER BY start_time DESC")
