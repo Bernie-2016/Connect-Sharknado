@@ -157,9 +157,9 @@ class EventScraper(Scraper):
             record = self.translate(result)
 
             if self.event_provider.exists_by_event_id(record["event_id"]):
-                #print "found"
+                print "found"
             else:
-                #print "not found"
+                print "not found"
                 msg = "Inserting record for '{0}'."
                 logging.info(msg.format(record["name"].encode("utf8")))
                 record["timestamp_creation"] = datetime.now()

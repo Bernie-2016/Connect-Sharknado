@@ -69,7 +69,7 @@ class IssuesScraper(Scraper):
         for url in urls:
             record = self.retrieve(url)
             if self.issue_provider.exists_by_url(record["url"]):
-                #print "found"
+                print "found"
             else:
                 msg = "Inserting record for '{0}'."
                 logging.info(msg.format(record["title"].encode("utf8")))
