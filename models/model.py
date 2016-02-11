@@ -5,6 +5,7 @@ import psycopg2.extras
 import yaml
 import abc
 import uuid
+from uuid import UUID
 from datetime import datetime
 
 
@@ -30,6 +31,18 @@ class Provider:
 
     def generate_uuid(self):
         return uuid.uuid4()
+
+    def validate_uuid4(self, uuid_string):
+        """
+        from:
+        https://gist.github.com/ShawnMilo/7777304
+        """
+        try:
+            val = UUID(uuid_string, version=4)
+        except ValueError:
+            return False
+
+        return val.hex == uuid_string
 
     def get_config(self):
         try:

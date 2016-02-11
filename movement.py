@@ -20,6 +20,8 @@ from models.article import ArticleProvider
 from models.news import NewsProvider
 from models.push import PushProvider
 from models.news import News
+from models.push import Push
+from connectors.parse.base import ParseWrapper
 
 app = Flask(__name__)
 app.config.from_object(__name__)
@@ -42,21 +44,16 @@ def greeting():
 
 
 # Push Notifications
-@app.route('/push/new')
+@app.route('/push/create', methods=['GET', 'POST'])
 @auth.login_required
-def push_new():
-	created = False
+def push_create():
 	if request.method == 'POST':
-		return render_template('push_new.html', error='')
-		#push = push_provider.create(request)
-		#if type(push).__name__ == 'instance':
-		#	created = True
-		#	return render_template('push.html', push=push, created=created)
-		#else:
-		#	error = 'Could not create push'
-		#	return render_template('push_new.html', error=error)
+		data = dict((key, request.form.getlist(key)[0]) for key in request.form.keys())
+		push = push_provider.create(data)
+		if hasattr(push, 'uuid'):
+			return redirect('/push/' + str(push.uuid))
 	else:
-		return render_template('push_new.html', error='')
+		return render_template('push.html', push=Push({'object_type': 'Custom', 'object_uuid': ''}), updated=False)
 
 @app.route('/push/list')
 @auth.login_required
@@ -69,10 +66,31 @@ def push_list():
 def push_detail(push_uuid):
 	push = push_provider.read(push_uuid)
 	updated = False
-	if request.method == 'POST' and push_provider.update(push, request):
-		updated = True
-	return render_template('push.html', push=push, updated=updated)
+	msg = False
+	if request.method == 'POST':
+		try:
+			send_push = request.form['_send_push']
+		except AttributeError as e:
+			send_push = 0
 
+		if push_provider.update(push, request):
+			updated = True
+			if send_push == '1':
+				''' Push the notification '''
+				parse = ParseWrapper()
+				object_uuid = ''
+				if push.object_uuid:
+					object_uuid = push.object_uuid
+				if parse.push(request.form['title'], 'openNewsArticle', object_uuid):
+					push = push_provider.read(push_uuid)
+					push_provider.set_pushed(push)
+					msg = 'The following alert has been pushed: ' + request.form['title']
+				else:
+					msg = 'Push notification failed. Record still saved.'
+			else:
+				msg = 'Push saved but not sent'
+
+	return render_template('push.html', push=push, updated=updated, msg=msg)
 
 # News
 @app.route('/news/create', methods=['GET', 'POST'])
