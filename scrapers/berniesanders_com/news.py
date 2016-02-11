@@ -8,6 +8,7 @@ from HTMLParser import HTMLParser
 
 from models.news import NewsProvider
 from scrapers.scraper import Scraper
+from models.push import PushProvider
 
 logging.basicConfig(format="%(asctime)s - %(levelname)s : %(message)s",
                     level=logging.INFO)
@@ -19,6 +20,7 @@ class NewsScraper(Scraper):
         self.url = "https://berniesanders.com/news/"
         self.html = HTMLParser()
         self.news_provider = NewsProvider()
+        self.push_provider = PushProvider()
 
     def retrieve_article(self, url):
         for x in range(3):
@@ -91,7 +93,8 @@ class NewsScraper(Scraper):
             else:
                 print "not found"
                 msg = "Inserting '{0}', created {1}"
-                self.news_provider.create(rec)
+                result = self.news_provider.create(rec)
+                self.push_provider.create_by_foreign_model(result)
 
             logging.info(msg.format(
                 rec["title"].encode("utf8"),

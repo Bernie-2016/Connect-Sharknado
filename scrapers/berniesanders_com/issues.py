@@ -8,6 +8,7 @@ from HTMLParser import HTMLParser
 
 from models.issue import IssueProvider
 from scrapers.scraper import Scraper
+from models.push import PushProvider
 
 logging.basicConfig(format="%(asctime)s - %(levelname)s : %(message)s",
                     level=logging.INFO)
@@ -20,6 +21,7 @@ class IssuesScraper(Scraper):
         self.url = "https://berniesanders.com/issues/feed/"
         self.html = HTMLParser()
         self.issue_provider = IssueProvider()
+        self.push_provider = PushProvider()
 
     def collect_urls(self):
         records = []
@@ -74,7 +76,8 @@ class IssuesScraper(Scraper):
                 msg = "Inserting record for '{0}'."
                 logging.info(msg.format(record["title"].encode("utf8")))
                 record["timestamp_creation"] = datetime.now()
-                self.issue_provider.create(record)
+                result = self.issue_provider.create(record)
+                self.push_provider.create_by_foreign_model(result)
 
 
 if __name__ == "__main__":
