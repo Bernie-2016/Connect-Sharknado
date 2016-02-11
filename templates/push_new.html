@@ -1,0 +1,18 @@
+{% include '_header.html' %}
+
+	<div class="breadcrumb"><a href="/">Home</a> &rsaquo; <a href="/push/list">List of push notifications</a> &rsaquo; Create new push notification</div>
+
+	<form class="update" action="/push/new" method="POST">
+		<h1>Push notification: {{ request.title }}</h1>
+		<div>
+			<div class="fieldname">Title:</div> <input type="text" class="text-m" name="title" value="{{ request.title }}" />
+		</div>
+		<div>
+			<div class="fieldname">Body:</div> <textarea class="textarea-m" name="body"> {{ request.body }}</textarea>
+		</div>
+		<div>
+			<input type="submit" value="Create and review notification" />
+		</div>
+	</form>
+
+{% include '_footer.html' %}
