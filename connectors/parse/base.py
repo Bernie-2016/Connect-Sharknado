@@ -71,7 +71,7 @@ class ParseWrapper:
         alert = "I am target to Everyone hopefully"
         identifier = "e8021067-ece6-424e-acd8-5bd4d9b4f011"
         action = "openNewsArticle"
-    	self.push(alert, action, identifier)
+        self.push(alert, action, identifier)
 
 if __name__ == "__main__":
     bernie = ParseWrapper()
