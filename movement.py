@@ -67,6 +67,7 @@ def push_detail(push_uuid):
 	push = push_provider.read(push_uuid)
 	updated = False
 	msg = False
+	alert_type = ''
 	if request.method == 'POST':
 		try:
 			send_push = request.form['_send_push']
@@ -81,16 +82,31 @@ def push_detail(push_uuid):
 				object_uuid = ''
 				if push.object_uuid:
 					object_uuid = push.object_uuid
-				if parse.push(request.form['title'], 'openNewsArticle', object_uuid):
-					push = push_provider.read(push_uuid)
-					push_provider.set_pushed(push)
-					msg = 'The following alert has been pushed: ' + request.form['title']
-				else:
-					msg = 'Push notification failed. Record still saved.'
+
+				try:
+					action = {
+						'news' : 'openNewsArticle',
+						'article': 'openNewsArticle',
+						'video': 'openVideo'
+					}[push.object_type]
+
+					if parse.push(request.form['title'], action, object_uuid):
+						push = push_provider.read(push_uuid)
+						push_provider.set_pushed(push)
+						alert_type = 'alert-success'
+						msg = 'The following alert has been pushed: ' + request.form['title']
+					else:
+						alert_type = 'alert-danger'
+						msg = 'Push notification failed. Record still saved.'
+
+				except AttributeError as e:
+					alert_type = 'alert-danger'
+					msg = 'Push saved but notification sending failed: ' + e
 			else:
+				alert_type = 'alert-warning'
 				msg = 'Push saved but not sent'
 
-	return render_template('push.html', push=push, updated=updated, msg=msg)
+	return render_template('push.html', push=push, updated=updated, msg=msg, alert_type=alert_type)
 
 # News
 @app.route('/news/create', methods=['GET', 'POST'])

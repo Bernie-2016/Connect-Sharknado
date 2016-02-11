@@ -27,13 +27,19 @@ class ParseWrapper:
         self.base_uri = 'https://api.parse.com/1'
 
     def push (self, alert, action, identifier):
+        '''
+        use `openNewsArticle` for both press releases and articles
+        use `openVideo` for videos
+        '''
         payload = \
         {
             "where": {},
             "data" : {
                 "action": action,
-                "alert": alert,
-                "sound": "default",
+                "aps": {
+                    "alert": alert,
+                    "sound": "default",
+                },
                 "identifier": identifier
             }
         }
