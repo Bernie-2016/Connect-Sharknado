@@ -36,11 +36,15 @@ class Provider:
         """
         from:
         https://gist.github.com/ShawnMilo/7777304
+        Validate a uuid string. Modified to give UUID objects a pass
         """
         try:
             val = UUID(uuid_string, version=4)
         except ValueError:
             return False
+        except AttributeError:
+            if isinstance(uuid_string, uuid.UUID):
+                return True
 
         return val.hex == uuid_string
 
