@@ -7,6 +7,7 @@ import yaml
 from datetime import datetime
 
 import model
+from connectors.gmail.base import GmailWrapper
 
 class PushProvider (model.Provider):
     table_name = "push"
@@ -28,6 +29,11 @@ class PushProvider (model.Provider):
 
         with self.get_db_cursor() as cur:
             cur.execute("INSERT INTO push (uuid, status, object_type, object_uuid, title, body, url, timestamp_creation, timestamp_publish) VALUES(%s, %s, %s, %s, %s, %s, %s, %s, %s)", (record["uuid"], 1, record["object_type"], record["object_uuid"], record["title"], record["body"], record["url"], record["timestamp_creation"], record["timestamp_publish"],))
+            mailer = GmailWrapper()
+            subject = "Push ready: {}".format(record["title"].encode("utf8"))
+            link = "{0}/push/{1}".format(self.config["flask"]["public_base_url"], record["uuid"])
+            body = "Title: '{0}' \n\nLink: {1} \n\n".format(record["title"].encode("utf8"), link)
+            mailer.send_mail(subject, body)
             return Push(record)
 
     def update (self, record, request):
