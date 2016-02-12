@@ -8,9 +8,6 @@ sys.setdefaultencoding('utf8')
 from flask import Flask, request, session, url_for, redirect, render_template, abort, g, flash
 from flask_httpauth import HTTPBasicAuth
 
-from parse_rest.connection import register
-from parse_rest.installation import Push
-
 from datetime import datetime
 
 from models.event import EventProvider
