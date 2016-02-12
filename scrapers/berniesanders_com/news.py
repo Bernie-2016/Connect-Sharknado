@@ -9,6 +9,7 @@ from HTMLParser import HTMLParser
 from models.news import NewsProvider
 from scrapers.scraper import Scraper
 from models.push import PushProvider
+from utils.markdown import convert_markdown
 
 logging.basicConfig(format="%(asctime)s - %(levelname)s : %(message)s",
                     level=logging.INFO)
@@ -86,6 +87,8 @@ class NewsScraper(Scraper):
                     article["image_url"]
                 except KeyError:
                     article["image_url"] = image
+
+            rec['body_markdown'] = convert_markdown (rec['body_html'])
 
             msg = ""
             if self.news_provider.exists_by_news_id(rec["news_id"]):

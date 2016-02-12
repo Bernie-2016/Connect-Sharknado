@@ -9,6 +9,7 @@ from HTMLParser import HTMLParser
 from models.issue import IssueProvider
 from scrapers.scraper import Scraper
 from models.push import PushProvider
+from utils.markdown import convert_markdown
 
 logging.basicConfig(format="%(asctime)s - %(levelname)s : %(message)s",
                     level=logging.INFO)
@@ -60,6 +61,7 @@ class IssuesScraper(Scraper):
             elif elem.name == 'br':
                 text.append("")
         record["body"] = "\n".join(text)
+        record['body_markdown'] = convert_markdown (record['body_html'])
 
         return record
 

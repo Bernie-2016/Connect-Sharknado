@@ -64,6 +64,7 @@ CREATE TABLE issue (
     article_type text,
     body text,
     body_html text,
+    body_markdown text,
     description text,
     description_html text,
     timestamp_creation timestamp with time zone,
@@ -91,6 +92,7 @@ CREATE TABLE article (
     body text,
     body_html text,
     body_html_nostyle text,
+    body_markdown text,
     CONSTRAINT title_article_type UNIQUE (title, article_type) -- No duplicates with the same title and article type
 );
 CREATE UNIQUE INDEX index_article_uuid ON article (uuid);
@@ -114,7 +116,8 @@ CREATE TABLE news (
     image_url text,
     body text,
     body_html text,
-    body_html_nostyle text
+    body_html_nostyle text,
+    body_markdown text
 );
 CREATE UNIQUE INDEX index_news_uuid ON news (uuid);
 CREATE UNIQUE INDEX index_news_id ON news (news_id);
