@@ -48,6 +48,9 @@ class ArticlesScraper(Scraper):
             rec = {
             	"article_id": article['id'],
                 "image_url": "",
+                "body": "",
+                "body_html": "",
+                "body_html_nostyle": "",
                 "timestamp_publish": self.choose_publish_date(article.time["datetime"]),
                 "site": "berniesanders.com",
                 "lang": "en",
