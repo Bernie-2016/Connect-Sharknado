@@ -47,7 +47,7 @@ class NewsScraper(Scraper):
             rec = {
                 "news_id": article['id'],
                 "image_url": "",
-                "timestamp_publish": parser.parse(article.time["datetime"]),
+                "timestamp_publish": self.choose_publish_date(article.time["datetime"]),
                 "site": "berniesanders.com",
                 "lang": "en",
                 "title": self.html.unescape(article.h2.text),

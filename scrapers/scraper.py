@@ -8,7 +8,9 @@ import psycopg2
 
 from abc import ABCMeta, abstractmethod
 from BeautifulSoup import BeautifulSoup, Comment
-
+from datetime import datetime
+from dateutil.parser import parse
+from math import fabs
 
 class Scraper(object):
 
@@ -22,7 +24,7 @@ class Scraper(object):
         self.cur.execute("set TIMEZONE='%s'" % 'UTC')
 
     def sanitize_soup(self, soup):
-        # inspired by https://chase-seibert.github.io/blog/2011/01/28/sanitize-html-with-beautiful-soup.html  
+        # inspired by https://chase-seibert.github.io/blog/2011/01/28/sanitize-html-with-beautiful-soup.html
         blacklist = ["script", "noscript", "video"]
 
         for tag in soup.findAll():
@@ -48,6 +50,20 @@ class Scraper(object):
             elif elem.name == 'br':
                 text += '\n'
         return text
+
+    def choose_publish_date(self, publish_date):
+        '''
+        If the current date is within 24 hours of the alleged
+        publish_date, return the current date. Otherwise we
+        will use midnight on the publish_date
+        '''
+        publish_date = parse(publish_date)
+        current_date = datetime.now()
+        seconds_delta = int(round(fabs( (current_date - publish_date).total_seconds() )))
+        if (seconds_delta >= 86400):
+            return publish_date
+        else:
+            return current_date
 
     def get_config(self):
         try:
