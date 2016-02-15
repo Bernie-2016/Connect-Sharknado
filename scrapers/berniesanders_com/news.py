@@ -46,8 +46,11 @@ class NewsScraper(Scraper):
         for article in content.findAll("article"):
             rec = {
                 "news_id": article['id'],
+                "body": "",
+                "body_html": "",
+                "body_html_nostyle": "",
                 "image_url": "",
-                "timestamp_publish": parser.parse(article.time["datetime"]),
+                "timestamp_publish": self.choose_publish_date(article.time["datetime"]),
                 "site": "berniesanders.com",
                 "lang": "en",
                 "title": self.html.unescape(article.h2.text),

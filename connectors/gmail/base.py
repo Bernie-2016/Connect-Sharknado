@@ -21,6 +21,9 @@ class GmailWrapper:
         c = self.config['gmail']
         recipients = c['recipients']
 
+        if (c['send_email'] != 1):
+            return True
+
         mmsg = MIMEMultipart()
 
         if isinstance(recipients, list):

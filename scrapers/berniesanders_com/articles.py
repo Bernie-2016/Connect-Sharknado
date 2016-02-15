@@ -44,11 +44,14 @@ class ArticlesScraper(Scraper):
         soup = self.get(self.url)
         content = soup.find("section", {"id": "content"})
         for article in content.findAll("article"):
-            
+
             rec = {
             	"article_id": article['id'],
                 "image_url": "",
-                "timestamp_publish": parser.parse(article.time["datetime"]),
+                "body": "",
+                "body_html": "",
+                "body_html_nostyle": "",
+                "timestamp_publish": self.choose_publish_date(article.time["datetime"]),
                 "site": "berniesanders.com",
                 "lang": "en",
                 "article_type": "DemocracyDaily",
