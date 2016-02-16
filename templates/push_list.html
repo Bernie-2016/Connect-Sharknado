@@ -10,19 +10,21 @@
 				<th>Status</th>
 				<th>Alert</th>
 				<th>Object Type</th>
+				<th>Creation</th>
 				<th>Published</th>
 			</tr>
 		</thead>
 		<tbody>
 {% for push in pushes: %}
 			<tr{% if push.status == 0 %} class="redacted"{% elif push.status==2 %} class="push-sent"{% endif %}>
-				<td>{% if push.status == 1 %}Unsent{% elif push.status==2 %}Sent{% elif push.status==0 %}Redacted{% endif %}</td>
+				<td>{% if push.status == 1 %}<span style="display:none;">1</span>Unsent{% elif push.status==2 %}<span style="display:none;">3</span>Sent{% elif push.status==0 %}<span style="display:none;">2</span>Redacted{% endif %}</td>
 				<td><a href="/push/{{ push.uuid }}">{{ push.title }}</a></td>
 				<td>{{ push.object_type }}</td>
+				<td>{{ push.timestamp_creation }}</td>
 				<td>{% if push.status == 2 %}{{ push.timestamp_publish }}{% else %}Not published{% endif %}</td>
 			</tr>
 {% endfor %}
 		</tbody>
 	</table>
-
+{% set default_sort = 3 %}
 {% include '_footer.html' %}

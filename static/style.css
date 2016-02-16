@@ -14,6 +14,8 @@ body {
 
 th {
 	white-space: nowrap;
+	outline: none;
+	cursor: pointer;
 }
 
 tr.redacted a {
@@ -33,7 +35,20 @@ tr.push-sent a {
     background-color: #C6FFCD;
     opacity: 0.6;
 }
-
+table.dataTable thead th {
+    background-repeat: no-repeat;
+    background-position: center right;
+    padding-right: 18px;
+}
+table.dataTable thead .sorting {
+    background-image: url("images/sort_both.png");
+}
+table.dataTable thead .sorting_desc {
+    background-image: url("images/sort_desc.png");
+}
+table.dataTable thead .sorting_asc {
+    background-image: url("images/sort_asc.png");
+}
 .sent-warning {
 	color: red;
 	font-size: 14px;
