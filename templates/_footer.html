@@ -1,3 +1,13 @@
 	<script src="/static/movement.js"></script>
+{% if default_sort: %}
+	<script>
+		$("table.table").DataTable({
+			stateSave: true,
+			paging: false,
+			searching: false,
+			order: [[ {{ default_sort }}, "desc"]]
+		});
+	</script>
+{% endif %}
 </body>
 </html>
