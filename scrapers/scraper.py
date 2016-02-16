@@ -61,9 +61,9 @@ class Scraper(object):
         current_date = datetime.now()
         seconds_delta = int(round(fabs( (current_date - publish_date).total_seconds() )))
         if (seconds_delta >= 86400):
-            return publish_date
+            return publish_date.strftime("%Y-%m-%dT%H:%M:%S+00:00")
         else:
-            return current_date
+            return current_date.strftime("%Y-%m-%dT%H:%M:%S+00:00")
 
     def get_config(self):
         try:
