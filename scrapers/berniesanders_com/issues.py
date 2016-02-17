@@ -33,7 +33,6 @@ class IssuesScraper(Scraper):
                 "timestamp_publish": parser.parse(item.pubdate.text),
                 "site": "berniesanders.com",
                 "lang": "en",
-                "description_html": item.description.text,
                 "description": self.html.unescape(
                     BeautifulSoup(item.description.text).p.text),
                 "url": item.link.nextSibling
@@ -53,7 +52,6 @@ class IssuesScraper(Scraper):
         soup = self.sanitize_soup(soup.find("section", {"id": "content"}))
         while soup.article.style is not None:
             soup.article.style.extract()
-        record["body_html"] = str(soup.article)
         text = []
         for elem in soup.article.recursiveChildGenerator():
             if isinstance(elem, types.StringTypes):
@@ -61,7 +59,7 @@ class IssuesScraper(Scraper):
             elif elem.name == 'br':
                 text.append("")
         record["body"] = "\n".join(text)
-        record['body_markdown'] = convert_markdown (record['body_html'])
+        record['body_markdown'] = convert_markdown (str(soup.article))
 
         return record
 
