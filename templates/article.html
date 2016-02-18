@@ -39,6 +39,9 @@
 			<div class="fieldname">Body:</div> <textarea class="textarea-m" name="body">{{ article.body }}</textarea>
 		</div>
 		<div>
+			<div class="fieldname">Body Markdown:</div> <textarea class="textarea-m" name="body_markdown">{{ article.body_markdown }}</textarea>
+		</div>
+		<div>
 			<select name="status">
 				<option value="1" {% if article.status == 1 %}selected {% endif %} />Visible</option>
 				<option value="0" {% if article.status == 0 %}selected {% endif %} />Redacted</option>
