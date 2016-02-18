@@ -3,6 +3,7 @@ DROP TABLE IF EXISTS event;
 DROP TABLE IF EXISTS issue;
 DROP TABLE IF EXISTS article;
 DROP TABLE IF EXISTS news;
+DROP TABLE IF EXISTS push;
 
 CREATE TABLE video (
     uuid uuid NOT NULL,
@@ -63,10 +64,8 @@ CREATE TABLE issue (
     title text,
     article_type text,
     body text,
-    body_html text,
     body_markdown text,
     description text,
-    description_html text,
     timestamp_creation timestamp with time zone,
     timestamp_publish timestamp with time zone
 );
@@ -84,14 +83,11 @@ CREATE TABLE article (
     article_type text,
     site text,
     lang text,
-    excerpt_html text,
     excerpt text,
     article_category text,
     url text,
     image_url text,
     body text,
-    body_html text,
-    body_html_nostyle text,
     body_markdown text,
     CONSTRAINT title_article_type UNIQUE (title, article_type) -- No duplicates with the same title and article type
 );
@@ -109,14 +105,11 @@ CREATE TABLE news (
     news_type text,
     site text,
     lang text,
-    excerpt_html text,
     excerpt text,
     news_category text,
     url text,
     image_url text,
     body text,
-    body_html text,
-    body_html_nostyle text,
     body_markdown text
 );
 CREATE UNIQUE INDEX index_news_uuid ON news (uuid);

@@ -17,13 +17,13 @@ class NewsProvider (model.Provider):
         record["uuid"] = self.generate_uuid()
         record["timestamp_creation"] = datetime.now()
 
-        required_keys = { 'status', 'news_id', 'timestamp_publish', 'title', 'news_type', 'site', 'lang', 'excerpt_html', 'excerpt', 'news_category', 'url', 'image_url', 'body', 'body_html', 'body_html_nostyle', 'body_markdown' }
+        required_keys = { 'status', 'news_id', 'timestamp_publish', 'title', 'news_type', 'site', 'lang', 'excerpt', 'news_category', 'url', 'image_url', 'body', 'body_markdown' }
         for key in required_keys:
             if key not in record.keys():
                 record[key] = ''
 
         with self.get_db_cursor() as cur:
-            cur.execute("INSERT INTO news (uuid, status, news_id, timestamp_creation, timestamp_publish, title, news_type, site, lang, excerpt_html, excerpt, news_category, url, image_url, body, body_html, body_html_nostyle, body_markdown) VALUES(%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)", (record["uuid"], 1, record["news_id"], record["timestamp_creation"], record["timestamp_publish"], record["title"], record["news_type"], record["site"], record["lang"], record["excerpt_html"], record["excerpt"], record["news_category"], record["url"], record["image_url"], record["body"], record["body_html"], record["body_html_nostyle"], record['body_markdown']))
+            cur.execute("INSERT INTO news (uuid, status, news_id, timestamp_creation, timestamp_publish, title, news_type, site, lang, excerpt, news_category, url, image_url, body, body_markdown) VALUES(%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)", (record["uuid"], 1, record["news_id"], record["timestamp_creation"], record["timestamp_publish"], record["title"], record["news_type"], record["site"], record["lang"], record["excerpt"], record["news_category"], record["url"], record["image_url"], record["body"], record['body_markdown']))
             return News(record)
 
     def update (self, record, request):
@@ -35,7 +35,7 @@ class NewsProvider (model.Provider):
                 setattr(record, k, request.form[k])
 
             record.status = int(request.form["status"])
-            cur.execute("UPDATE news SET (status, news_id, timestamp_publish, title, news_type, site, lang, excerpt_html, excerpt, news_category, url, image_url, body, body_html, body_html_nostyle, body_markdown) = (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s) WHERE uuid=%s", (record.status, record.news_id, record.timestamp_publish, record.title, record.news_type, record.site, record.lang, record.excerpt_html, record.excerpt, record.news_category, record.url, record.image_url, record.body, record.body_html, record.body_html_nostyle, record.body_markdown, record.uuid,))
+            cur.execute("UPDATE news SET (status, news_id, timestamp_publish, title, news_type, site, lang, excerpt, news_category, url, image_url, body, body_markdown) = (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s) WHERE uuid=%s", (record.status, record.news_id, record.timestamp_publish, record.title, record.news_type, record.site, record.lang, record.excerpt, record.news_category, record.url, record.image_url, record.body, record.body_markdown, record.uuid,))
             return True
 
     def exists (self, uuid):
