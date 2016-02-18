@@ -49,14 +49,10 @@ class ArticlesScraper(Scraper):
             	"article_id": article['id'],
                 "image_url": "",
                 "body": "",
-                "body_html": "",
-                "body_html_nostyle": "",
                 "timestamp_publish": self.choose_publish_date(article.time["datetime"]),
                 "site": "berniesanders.com",
                 "lang": "en",
                 "article_type": "DemocracyDaily",
-                "excerpt_html": str(article.find(
-                    "div", {"class": "excerpt"}).p),
                 "excerpt": self.html.unescape(
                     article.find(
                         "div", {"class": "excerpt"}).p.text),
@@ -69,21 +65,19 @@ class ArticlesScraper(Scraper):
 
             text, html, image = self.retrieve_article(rec["url"])
             if text and not html:
-                rec["body"], rec["body_html"] = text, text
+                rec["body"] = text
+                rec["body_markdown"] = text
                 rec['article_type'] = "ExternalLink"
-                rec["body_html_nostyle"] = ""
             elif text and html:
-                rec["body"], rec["body_html"] = text, html
-
-                no_style = self.remove_style(BeautifulSoup(html))
-                rec["body_html_nostyle"] = "".join([str(p) for p in no_style.findAll("p")])
-
+                rec["body"] = text
+                rec['body_markdown'] = convert_markdown (html)
+                print rec['body_markdown']
+                exit(0)
                 try:
                     article["image_url"]
                 except KeyError:
                     article["image_url"] = image
 
-            rec['body_markdown'] = convert_markdown (rec['body_html'])
 
             msg = ""
             if self.article_provider.exists_by_article_id(rec["article_id"]):

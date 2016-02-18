@@ -47,8 +47,6 @@ class NewsScraper(Scraper):
             rec = {
                 "news_id": article['id'],
                 "body": "",
-                "body_html": "",
-                "body_html_nostyle": "",
                 "image_url": "",
                 "timestamp_publish": self.choose_publish_date(article.time["datetime"]),
                 "site": "berniesanders.com",
@@ -62,10 +60,9 @@ class NewsScraper(Scraper):
 
             # Pull excerpt if available
             try:
-                rec["excerpt_html"] = str(article.p)
                 rec["excerpt"] = self.html.unescape(article.p.text)
             except AttributeError:
-                rec["excerpt"], rec["excerpt_html"] = "", ""
+                rec["excerpt"] = ""
 
             # Determine Type
             if rec['news_category'].lower() in ["on the road", "news"]:
@@ -77,21 +74,16 @@ class NewsScraper(Scraper):
 
             text, html, image = self.retrieve_article(rec["url"])
             if text and not html:
-                rec["body"], rec["body_html"] = text, text
+                rec["body"], rec["body_markdown"] = text, text
                 rec['news_type'] = "ExternalLink"
-                rec["body_html_nostyle"] = ""
             elif text and html:
-                rec["body"], rec["body_html"] = text, html
-
-                no_style = self.remove_style(BeautifulSoup(html))
-                rec["body_html_nostyle"] = "".join([str(p) for p in no_style.findAll("p")])
-
+                rec["body"]
+                rec['body_markdown'] = convert_markdown (html)
                 try:
                     article["image_url"]
                 except KeyError:
                     article["image_url"] = image
 
-            rec['body_markdown'] = convert_markdown (rec['body_html'])
 
             msg = ""
             if self.news_provider.exists_by_news_id(rec["news_id"]):
