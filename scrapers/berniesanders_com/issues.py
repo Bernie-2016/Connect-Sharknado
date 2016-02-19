@@ -17,22 +17,30 @@ logging.basicConfig(format="%(asctime)s - %(levelname)s : %(message)s",
 
 class IssuesScraper(Scraper):
 
-    def __init__(self):
+    def __init__(self, url):
         Scraper.__init__(self)
-        self.url = "https://berniesanders.com/issues/feed/"
+        self.url = url
         self.html = HTMLParser()
         self.issue_provider = IssueProvider()
         self.push_provider = PushProvider()
 
     def collect_urls(self):
         records = []
-        items = self.get(self.url).findAll("item")
+        r = self.get(self.url)
+        try:
+            lang = {
+                "en-us": "en",
+                "es-es": "es"
+            }[r.language.string.lower()]
+        except KeyError:
+            lang = "en"
+        items = r.findAll("item")
         for item in items:
             record = {
                 "title": self.html.unescape(item.title.text),
                 "timestamp_publish": parser.parse(item.pubdate.text),
                 "site": "berniesanders.com",
-                "lang": "en",
+                "lang": lang,
                 "description": self.html.unescape(
                     BeautifulSoup(item.description.text).p.text),
                 "url": item.link.nextSibling
@@ -48,7 +56,7 @@ class IssuesScraper(Scraper):
         meta_image = soup.findAll(attrs={"property":"og:image"})
         record["image_url"] = meta_image[0]["content"].encode('utf8')
 
-        # reset soup to content     
+        # reset soup to content
         soup = self.sanitize_soup(soup.find("section", {"id": "content"}))
         while soup.article.style is not None:
             soup.article.style.extract()
@@ -77,9 +85,11 @@ class IssuesScraper(Scraper):
                 logging.info(msg.format(record["title"].encode("utf8")))
                 record["timestamp_creation"] = datetime.now()
                 result = self.issue_provider.create(record)
-                self.push_provider.create_by_foreign_model(result)
+                # self.push_provider.create_by_foreign_model(result)
 
 
 if __name__ == "__main__":
-    i = IssuesScraper()
-    i.go()
+    bernieEn = IssuesScraper("https://berniesanders.com/issues/feed/")
+    bernieEn.go()
+    bernieEs = IssuesScraper("https://berniesanders.com/es/cuestiones/feed/")
+    bernieEs.go()

@@ -9,6 +9,7 @@
 			<tr>
 				<th>News Title</th>
 				<th>News Type</th>
+				<th>Lang</th>
 				<th>Publish Date</th>
 			</tr>
 		</thead>
@@ -17,10 +18,11 @@
 			<tr{% if news.status == 0 %} class="redacted"{% endif %}>
 				<td><a href="/news/{{ news.uuid }}">{{ news.title }}</a></td>
 				<td>{{ news.news_type }}</td>
+				<td>{{ news.lang }}</td>
 				<td>{{ news.timestamp_publish }}</td>
 			</tr>
 {% endfor %}
 		</tbody>
 	</table>
-{% set default_sort = 2 %}
+{% set default_sort = 3 %}
 {% include '_footer.html' %}
