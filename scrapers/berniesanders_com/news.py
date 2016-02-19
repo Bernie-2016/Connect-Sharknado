@@ -16,9 +16,9 @@ logging.basicConfig(format="%(asctime)s - %(levelname)s : %(message)s",
 
 class NewsScraper(Scraper):
 
-    def __init__(self):
+    def __init__(self, url):
         Scraper.__init__(self)
-        self.url = "https://berniesanders.com/news/"
+        self.url = url
         self.html = HTMLParser()
         self.news_provider = NewsProvider()
         self.push_provider = PushProvider()
@@ -42,6 +42,10 @@ class NewsScraper(Scraper):
 
     def go(self):
         soup = self.get(self.url)
+        try:
+            lang = soup.html['lang']
+        except KeyError as e:
+            lang = 'en'
         content = soup.find("section", {"id": "content"})
         for article in content.findAll("article"):
             rec = {
@@ -50,7 +54,7 @@ class NewsScraper(Scraper):
                 "image_url": "",
                 "timestamp_publish": self.choose_publish_date(article.time["datetime"]),
                 "site": "berniesanders.com",
-                "lang": "en",
+                "lang": lang,
                 "title": self.html.unescape(article.h2.text),
                 "news_category": self.html.unescape(article.h1.string.strip()),
                 "url": article.h2.a["href"]
@@ -67,7 +71,7 @@ class NewsScraper(Scraper):
             # Determine Type
             if rec['news_category'].lower() in ["on the road", "news"]:
                 rec['news_type'] = "News"
-            elif rec['news_category'].lower() == "press release":
+            elif rec['news_category'].lower() in ["press release", "comunicados de prensa"]:
                 rec['news_type'] = "PressRelease"
             else:
                 rec['news_type'] = "Unknown"
@@ -100,5 +104,9 @@ class NewsScraper(Scraper):
             ))
 
 if __name__ == "__main__":
-    bernie = NewsScraper()
-    bernie.go()
+    # English
+    bernieEn = NewsScraper("https://berniesanders.com/news/")
+    bernieEn.go()
+    # Spanish
+    bernieEs = NewsScraper("https://berniesanders.com/es/comunicados-de-prensa/")
+    bernieEs.go()
