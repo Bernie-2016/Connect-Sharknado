@@ -81,7 +81,7 @@ class NewsScraper(Scraper):
                 rec["body"], rec["body_markdown"] = text, text
                 rec['news_type'] = "ExternalLink"
             elif text and html:
-                rec["body"]
+                rec["body"] = text
                 rec['body_markdown'] = convert_markdown (html)
                 try:
                     article["image_url"]
