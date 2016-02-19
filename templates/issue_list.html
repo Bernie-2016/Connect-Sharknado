@@ -7,6 +7,7 @@
 		<thead>
 			<tr>
 				<th>Issue Title</th>
+				<th>Lang</th>
 				<th>Publish Date</th>
 			</tr>
 		</thead>
@@ -14,10 +15,11 @@
 {% for issue in issues: %}
 			<tr{% if issue.status == 0 %} class="redacted"{% endif %}>
 				<td><a href="/issue/{{ issue.uuid }}">{{ issue.title }}</a></td>
+				<td>{{ issue.lang }}</td>
 				<td>{{ issue.timestamp_publish }}</td>
 			</tr>
 {% endfor %}
 		</tbody>
 	</table>
-{% set default_sort = 1 %}
+{% set default_sort = 2 %}
 {% include '_footer.html' %}
