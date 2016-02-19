@@ -71,7 +71,6 @@ class ArticlesScraper(Scraper):
             elif text and html:
                 rec["body"] = text
                 rec['body_markdown'] = convert_markdown (html)
-                print rec['body_markdown']
                 exit(0)
                 try:
                     article["image_url"]
