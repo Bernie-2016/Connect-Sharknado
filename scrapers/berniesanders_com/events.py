@@ -5,6 +5,7 @@ import hmac
 import time
 import urllib
 import json
+import re
 
 from pytz import timezone
 from datetime import datetime
@@ -137,8 +138,9 @@ class EventScraper(Scraper):
         # Strip html tags from description
         if result["description"] is not None:
             soup = BeautifulStoneSoup(result["description"], convertEntities=BeautifulStoneSoup.ALL_ENTITIES)
-            result["description"] = "\n\n".join(soup.findAll(text=True))
-
+            joined_soup = "\n\n".join(soup.findAll(text=True))
+            result["description"] = re.sub("(\\n){3,}", "\n\n", joined_soup)
+        
         # timezone
         if result["start_tz"]:
             tz = timezone(result['start_tz'])
