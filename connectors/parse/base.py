@@ -23,7 +23,6 @@ class ParseWrapper:
             'X-Parse-REST-API-Key': c['parse_rest_api_key'],
             'Content-Type': 'application/json'
         }
-        self.default_channels = c['parse_default_channels']
         self.base_uri = 'https://api.parse.com/1'
 
     def push (self, alert, action, identifier):
@@ -33,7 +32,9 @@ class ParseWrapper:
         '''
         payload = \
         {
-            "where": {},
+            "where": {
+              "deviceType": "ios"
+            },
             "data" : {
                 "action": action,
                 "aps": {
